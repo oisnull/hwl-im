@@ -1,0 +1,130 @@
+syntax = "proto3";
+//protoc --java_out=src/main/java src/main/java/com/hwl/im/protocol/im_message.proto
+option csharp_namespace = "IMCore.Protocol";
+option java_multiple_files = true;
+option java_package = "com.hwl.im.core.proto";
+
+enum ImMessageType {
+    Base = 0;
+    UserValidate = 1;
+    ChatUser = 2;
+    ChatGroup = 3;
+    HeartBeat = 4;
+}
+
+enum ImMessageResponseCode {
+    Other = 0;
+    Success = 100;
+    Failed = 200;
+    SessionidInvalid=201;
+}
+
+enum ImMessageSourcePosition{
+    None=0;
+    RealTime=1;
+    Offline=2;
+    Retry=3;
+}
+
+message ImMessageContext {
+    ImMessageType type = 1;
+    oneof body {
+        ImMessageRequest request = 2;
+        ImMessageResponse response = 3;
+    }
+}
+
+message ImMessageRequest {
+    ImMessageRequestHead requestHead = 1;
+    oneof requestBody {
+        ImUserValidateRequest userValidateRequest = 2;
+        ImChatUserMessageRequest chatUserMessageRequest = 3;
+        ImChatGroupMessageRequest chatGroupMessageRequest = 4;
+        ImHeartBeatMessageRequest heartBeatMessageRequest = 5;
+    }
+}
+
+message ImMessageResponse {
+    ImMessageResponseHead responseHead = 1;
+    oneof responseBody {
+        ImUserValidateResponse userValidateResponse = 2;
+        ImChatUserMessageResponse chatUserMessageResponse = 3;
+        ImChatGroupMessageResponse chatGroupMessageResponse = 4;
+    }
+}
+
+message ImMessageRequestHead {
+    uint64 timestamp = 1;
+    string client = 2;
+    string sessionid = 3;
+    string language = 4;
+    string version = 5;
+}
+
+message ImMessageResponseHead {
+    uint32 code = 1;
+    string message = 2;
+    ImMessageSourcePosition source = 3;
+}
+
+message ImUserValidateRequest {
+    uint64 userId = 1;
+    string token = 2;
+}
+
+message ImUserValidateResponse {
+    bool isSuccess = 1;
+    string message = 2;
+    bool isOnline = 3;
+    string sessionid = 4;
+}
+
+message ImChatUserMessageRequest {
+    ImChatUserMessageContent chatUserMessageContent = 1;
+}
+
+message ImChatUserMessageResponse {
+    ImChatUserMessageContent chatUserMessageContent = 1;
+    uint64 buildTime = 2;
+}
+
+message ImChatUserMessageContent{
+    uint64 fromUserId = 1;
+    string fromUserName = 2;
+    string fromUserImage = 3;
+    uint64 toUserId = 4;
+    uint32 contentType = 5;
+    string content = 6;
+    string previewUrl = 7;
+    uint32 imageWidth = 8;
+    uint32 imageHeight = 9;
+    uint32 size = 10;
+    uint32 playTime = 11;
+}
+
+message ImChatGroupMessageRequest {
+    ImChatGroupMessageContent chatGroupMessageContent = 1;
+}
+
+message ImChatGroupMessageResponse {
+    ImChatGroupMessageContent chatGroupMessageContent = 1;
+    uint64 buildTime = 2;
+}
+
+message ImChatGroupMessageContent{
+    uint64 fromUserId = 1;
+    string fromUserName = 2;
+    string fromUserImage = 3;
+    string toGrouopGuid = 4;
+    uint32 contentType = 5;
+    string content = 6;
+    string previewUrl = 7;
+    uint32 imageWidth = 8;
+    uint32 imageHeight = 9;
+    uint32 size = 10;
+    uint32 playTime = 11;
+}
+
+message ImHeartBeatMessageRequest {
+    uint64 currentTime = 1;
+}
