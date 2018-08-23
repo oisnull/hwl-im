@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 import com.hwl.im.core.ThreadPoolUtil;
+import com.hwl.im.core.imaction.MessageSendExecutor;
 import com.hwl.im.core.imom.OnlineManage;
 import com.hwl.im.core.imqos.RetryMessageManage;
 import com.hwl.im.core.imstore.OfflineMessageManage;
@@ -23,8 +24,10 @@ public class MessageOperate {
     final static ExecutorService executorService = Executors.newFixedThreadPool(ThreadPoolUtil.ioIntesivePoolSize());
 
     public static void send(Channel channel, ImMessageContext messageContext, Function<Boolean, Void> callback) {
-        if (channel == null || messageContext == null)
+        if (channel == null || messageContext == null) {
+            callback.apply(false);
             return;
+        }
         ChannelFuture channelFuture = channel.writeAndFlush(messageContext);
         channelFuture.addListener(new ChannelFutureListener() {
 
@@ -32,6 +35,27 @@ public class MessageOperate {
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (callback != null)
                     callback.apply(future.isSuccess());
+            }
+        });
+    }
+
+    public static void clientSend(Channel channel, MessageSendExecutor sendExecutor) {
+        if (sendExecutor == null || channel == null)
+            return;
+        ImMessageContext messageContext = sendExecutor.getMessageContext();
+        if (messageContext == null) {
+            sendExecutor.sendResultCallback(false);
+            return;
+        }
+        ChannelFuture channelFuture = channel.writeAndFlush(messageContext);
+        channelFuture.addListener(new ChannelFutureListener() {
+
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if (sendExecutor.isSendFailedAndClose() && !future.isSuccess()) {
+                    channel.close();
+                }
+                sendExecutor.sendResultCallback(future.isSuccess());
             }
         });
     }

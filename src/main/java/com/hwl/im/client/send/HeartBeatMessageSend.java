@@ -1,5 +1,7 @@
 package com.hwl.im.client.send;
 
+import java.util.function.Consumer;
+
 import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
 import com.hwl.im.core.proto.ImHeartBeatMessageRequest;
 import com.hwl.im.core.proto.ImMessageRequest.Builder;
@@ -17,13 +19,13 @@ public class HeartBeatMessageSend extends AbstractMessageSendExecutor {
     }
 
     @Override
-    public void getSendResult(boolean isSuccess) {
-        log.debug("client send heart beat : {}", isSuccess);
-    }
-
-    @Override
     public void setRequestBody(Builder request) {
         request.setHeartBeatMessageRequest(
                 ImHeartBeatMessageRequest.newBuilder().setCurrentTime(System.currentTimeMillis()).build());
     }
+
+	@Override
+	public Consumer<Boolean> sendStatusCallback() {
+		return null;
+	}
 }

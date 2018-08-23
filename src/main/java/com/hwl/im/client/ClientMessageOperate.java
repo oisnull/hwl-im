@@ -4,6 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.hwl.im.core.imaction.MessageListenExecutor;
 import com.hwl.im.core.imaction.MessageSendExecutor;
+import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.proto.ImMessageContext;
 import com.hwl.im.core.proto.ImMessageType;
 
@@ -48,8 +49,7 @@ public final class ClientMessageOperate {
 
     public void send(MessageSendExecutor sendExecutor) {
         check();
-        ClientMessageContextOperate contextOperate = new ClientMessageContextOperate(serverChannel, sendExecutor);
-        contextOperate.send();
+        MessageOperate.clientSend(serverChannel, sendExecutor);
     }
 
     public void send(MessageSendExecutor sendExecutor, MessageListenExecutor listenExecutor) {
@@ -63,9 +63,16 @@ public final class ClientMessageOperate {
 
     public void listen(ImMessageContext messageContext) {
         check();
-        ClientMessageContextOperate contextOperate = new ClientMessageContextOperate(serverChannel,
-                listenExecutors.get(messageContext.getType()));
-        contextOperate.read(messageContext);
+        if (messageContext == null)
+            return;
+        MessageListenExecutor listenExecutor = listenExecutors.get(messageContext.getType());
+        if (listenExecutor == null)
+            return;
+
+        listenExecutor.execute(messageContext);
+        if (listenExecutor.executedAndClose() && serverChannel != null) {
+            serverChannel.close();
+        }
     }
 
     public void disconnect() {
@@ -90,7 +97,7 @@ public final class ClientMessageOperate {
     // serverChannel.close();
     // unregisterChannel();
     // }
-    // sendExecutor.getSendResult(future.isSuccess());
+    // sendExecutor.sendResultCallback(future.isSuccess());
     // }
     // });
     // }

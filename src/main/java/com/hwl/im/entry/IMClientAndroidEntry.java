@@ -1,11 +1,12 @@
 package com.hwl.im.entry;
 
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.hwl.im.client.ClientMessageOperate;
 import com.hwl.im.client.IMClientHeartbeatTimer;
@@ -23,20 +24,33 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class IMClientAndroidEntry {
+
+    /**
+     * Function list :
+     * 
+     * 
+     */
+
     static Logger log = LogManager.getLogger(IMClientAndroidEntry.class.getName());
     static int CHECK_TIME_INTERNAL = 5; // s
 
-    private final static ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private final static ScheduledExecutorService checkConnectExecutor = Executors.newSingleThreadScheduledExecutor();
-    private final static ClientMessageOperate messageOperate = new ClientMessageOperate();
-    private final static IMClientLauncher launcher = new IMClientLauncher("localhost", 8081);
+    final static ExecutorService executorService = Executors.newSingleThreadExecutor();
+    final static ScheduledExecutorService checkConnectExecutor = Executors.newSingleThreadScheduledExecutor();
+    final static ClientMessageOperate messageOperate = new ClientMessageOperate();
+    final static IMClientLauncher launcher = new IMClientLauncher("localhost", 8081);
 
     static {
+        initListenExecutor();
         launcher.registerAction(messageOperate);
         launcher.registerClientListener(new AndroidClientListener());
     }
 
-    private static void startCheckConnect() {
+    static void initListenExecutor() {
+        messageOperate.registerListenExecutor(ImMessageType.ChatUser, new ChatUserMessageListen());
+        messageOperate.registerListenExecutor(ImMessageType.ChatGroup, new ChatGroupMessageListen());
+    }
+
+    static void startCheckConnect() {
         if (checkConnectExecutor.isShutdown()) {
             checkConnectExecutor.schedule(new Runnable() {
                 @Override
@@ -47,13 +61,18 @@ public class IMClientAndroidEntry {
         }
     }
 
-    private static void stopCheckConnect() {
+    static void stopCheckConnect() {
+        if (checkConnectExecutor.isShutdown())
+            return;
         checkConnectExecutor.shutdown();
+        // stopHeartbeat();
     }
 
     public static void connectServer() {
-        if (launcher.isConnected())
+        if (launcher.isConnected()) {
+            stopCheckConnect();
             return;
+        }
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -62,25 +81,103 @@ public class IMClientAndroidEntry {
         });
     }
 
-    public static void initListenExecutor() {
-        messageOperate.registerListenExecutor(ImMessageType.ChatUser, new ChatUserMessageListen());
-        messageOperate.registerListenExecutor(ImMessageType.ChatGroup, new ChatGroupMessageListen());
+    static void commomExec(DefaultSendOperateListener operateListener, Consumer<Consumer<Boolean>> sendConsumer) {
+        if (!launcher.isConnected()) {
+            operateListener.unconnect();
+            return;
+        }
+        Consumer<Boolean> sendCallback = new Consumer<Boolean>() {
+
+            @Override
+            public void accept(Boolean succ) {
+                if (!succ) {
+                    operateListener.notSendToServer();
+                }
+            }
+        };
+
+        sendConsumer.accept(sendCallback);
     }
 
-    public static void sendUserValidateMessage(Long userId, String userToken) {
-        messageOperate.send(new UserValidateSend(userId, userToken), new UserValidateListen((sessionid) -> {
-            MessageRequestHeadOperate.setSessionid(sessionid);
-            IMClientHeartbeatTimer.getInstance().run(new TimerTask() {
-                @Override
-                public void run() {
-                    messageOperate.send(new HeartBeatMessageSend());
-                }
+    public static void sendUserValidateMessage(Long userId, String userToken,
+            DefaultSendOperateListener operateListener) {
+
+        commomExec(operateListener, (sendCallback) -> {
+
+            UserValidateSend request = new UserValidateSend(userId, userToken, sendCallback);
+            UserValidateListen response = new UserValidateListen(sess -> {
+                operateListener.success();
+                startHeartbeat(sess);
+            }, msg -> {
+                operateListener.failed(msg);
+                stopHeartbeat();
             });
-            return null;
-        }, (msg) -> {
-            launcher.stop();
-            return null;
-        }));
+            messageOperate.send(request, response);
+
+        });
+
+        // if (!launcher.isConnected()) {
+        // operateListener.unconnect();
+        // return;
+        // }
+        // Consumer<Boolean> sendCallback = new Consumer<Boolean>() {
+
+        // @Override
+        // public void accept(Boolean succ) {
+        // if (!succ) {
+        // operateListener.notSendToServer();
+        // }
+        // }
+        // };
+        // UserValidateSend request = new UserValidateSend(userId, userToken,
+        // sendCallback);
+        // UserValidateListen response = new UserValidateListen(sess -> {
+        // operateListener.success();
+        // startHeartbeat(sess);
+        // }, msg -> {
+        // operateListener.failed(msg);
+        // stopHeartbeat();
+        // });
+        // messageOperate.send(request, response);
+    }
+
+    private static void startHeartbeat(String sessionId) {
+        MessageRequestHeadOperate.setSessionid(sessionId);
+        IMClientHeartbeatTimer.getInstance().run(new TimerTask() {
+            @Override
+            public void run() {
+                messageOperate.send(new HeartBeatMessageSend());
+            }
+        });
+    }
+
+    private static void stopHeartbeat() {
+        IMClientHeartbeatTimer.getInstance().stop();
+        launcher.stop();
+    }
+
+    public static class DefaultSendOperateListener {
+
+        public void unconnect() {
+            log.debug("Android client send operate : unconnect server ");
+        }
+
+        public void notSendToServer() {
+            log.debug("Android client send operate : message not send to server ");
+        }
+
+        public void success() {
+
+        }
+
+        public void failed(String message) {
+            log.debug("Android client send operate failed : {}", message);
+        }
+
+        public void sessionidInvaild() {
+            log.debug("Android client send operate : sessionid invalid");
+        }
+
     }
 
     static class AndroidClientListener implements IMClientListener {
@@ -115,5 +212,15 @@ public class IMClientAndroidEntry {
             startCheckConnect();
         }
 
+    }
+
+    public static void main(String[] args) {
+        IMClientAndroidEntry.connectServer();
+        IMClientAndroidEntry.sendUserValidateMessage(10000L, "123456", new DefaultSendOperateListener() {
+            @Override
+            public void success() {
+                
+            }
+        });
     }
 }

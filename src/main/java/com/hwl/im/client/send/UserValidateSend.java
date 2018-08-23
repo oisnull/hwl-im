@@ -5,6 +5,8 @@ import com.hwl.im.core.proto.ImMessageRequest.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.function.Consumer;
+
 import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
 import com.hwl.im.core.proto.ImMessageType;
 import com.hwl.im.core.proto.ImUserValidateRequest;
@@ -15,15 +17,16 @@ public class UserValidateSend extends AbstractMessageSendExecutor {
 
     Long userId = 0L;
     String token = "";
+    Consumer<Boolean> sendCallback;
 
     public UserValidateSend(Long userId, String token) {
         this.userId = userId;
         this.token = token;
     }
 
-    @Override
-    public void getSendResult(boolean isSuccess) {
-        log.debug("User validate send {} , userId:{} , token:{}", isSuccess ? "success" : "failed", userId, token);
+    public UserValidateSend(Long userId, String token, Consumer<Boolean> sendCallback) {
+        this(userId, token);
+        this.sendCallback = sendCallback;
     }
 
     @Override
@@ -36,5 +39,10 @@ public class UserValidateSend extends AbstractMessageSendExecutor {
         ImUserValidateRequest userValidateRequest = ImUserValidateRequest.newBuilder().setUserId(userId).setToken(token)
                 .build();
         request.setUserValidateRequest(userValidateRequest);
+    }
+
+    @Override
+    public Consumer<Boolean> sendStatusCallback() {
+        return this.sendCallback;
     }
 }

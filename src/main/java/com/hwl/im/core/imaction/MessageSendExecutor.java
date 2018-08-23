@@ -9,7 +9,7 @@ public interface MessageSendExecutor {
 
     ImMessageContext getMessageContext();
 
-    void getSendResult(boolean isSuccess);
+    void sendResultCallback(boolean isSuccess);
 
     boolean isSendFailedAndClose();
 }

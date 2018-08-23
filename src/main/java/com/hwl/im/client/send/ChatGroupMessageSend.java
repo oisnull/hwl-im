@@ -1,5 +1,7 @@
 package com.hwl.im.client.send;
 
+import java.util.function.Consumer;
+
 import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
 import com.hwl.im.core.proto.ImChatGroupMessageContent;
 import com.hwl.im.core.proto.ImChatGroupMessageRequest;
@@ -27,10 +29,10 @@ public class ChatGroupMessageSend extends AbstractMessageSendExecutor {
         return ImMessageType.ChatGroup;
     }
 
-    @Override
-    public void getSendResult(boolean isSuccess) {
-        log.debug("Client send chat user message to im server {}", isSuccess ? "success" : "failed");
-    }
+    // @Override
+    // public void sendResultCallback(boolean isSuccess) {
+    //     log.debug("Client send chat user message to im server {}", isSuccess ? "success" : "failed");
+    // }
 
     @Override
     public void setRequestBody(Builder request) {
@@ -39,4 +41,9 @@ public class ChatGroupMessageSend extends AbstractMessageSendExecutor {
         request.setChatGroupMessageRequest(
                 ImChatGroupMessageRequest.newBuilder().setChatGroupMessageContent(messageContent).build());
     }
+
+	@Override
+	public Consumer<Boolean> sendStatusCallback() {
+		return null;
+	}
 }

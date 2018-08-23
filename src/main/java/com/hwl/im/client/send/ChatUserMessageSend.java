@@ -1,6 +1,7 @@
 package com.hwl.im.client.send;
 
 import java.security.InvalidParameterException;
+import java.util.function.Consumer;
 
 import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
 import com.hwl.im.core.proto.ImChatUserMessageContent;
@@ -23,11 +24,6 @@ public class ChatUserMessageSend extends AbstractMessageSendExecutor {
         this.fromUserId = fromUserId;
         this.toUserId = toUserId;
         this.content = content;
-    }
-
-    @Override
-    public void getSendResult(boolean isSuccess) {
-        log.debug("Client send chat user message to im server {}", isSuccess ? "success" : "failed");
     }
 
     @Override
@@ -54,5 +50,10 @@ public class ChatUserMessageSend extends AbstractMessageSendExecutor {
             throw new NullPointerException("Send chat user message content cannot be null or empty");
         }
     }
+
+	@Override
+	public Consumer<Boolean> sendStatusCallback() {
+		return null;
+	}
 
 }

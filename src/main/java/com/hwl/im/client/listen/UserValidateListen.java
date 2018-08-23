@@ -1,6 +1,6 @@
 package com.hwl.im.client.listen;
 
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import com.hwl.im.core.imaction.AbstractMessageListenExecutor;
 import com.hwl.im.core.proto.ImMessageResponse;
@@ -11,15 +11,15 @@ import org.apache.logging.log4j.Logger;
 
 public class UserValidateListen extends AbstractMessageListenExecutor<ImUserValidateResponse> {
 
-    private Function<String, Void> succCallback;
-    private Function<String, Void> failedCallback;
+    private Consumer<String> succCallback;
+    private Consumer<String> failedCallback;
     static Logger log = LogManager.getLogger(UserValidateListen.class.getName());
 
-    public UserValidateListen(Function<String, Void> succCallback) {
+    public UserValidateListen(Consumer<String> succCallback) {
         this.succCallback = succCallback;
     }
 
-    public UserValidateListen(Function<String, Void> succCallback, Function<String, Void> failedCallback) {
+    public UserValidateListen(Consumer<String> succCallback, Consumer<String> failedCallback) {
         this.succCallback = succCallback;
         this.failedCallback = failedCallback;
     }
@@ -33,16 +33,18 @@ public class UserValidateListen extends AbstractMessageListenExecutor<ImUserVali
 
         if (response.getIsSuccess()) {
             if (this.succCallback != null)
-                this.succCallback.apply(response.getSessionid());
+                this.succCallback.accept(response.getSessionid());
         } else {
             if (this.failedCallback != null)
-                this.failedCallback.apply(response.getMessage());
+                this.failedCallback.accept(response.getMessage());
         }
     }
 
     @Override
     public void failed(int responseCode, String message) {
         log.debug("User validate receive failed : {}", message);
+        if (this.failedCallback != null)
+            this.failedCallback.accept(message);
     }
 
     @Override

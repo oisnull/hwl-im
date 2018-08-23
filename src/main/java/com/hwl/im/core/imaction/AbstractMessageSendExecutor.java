@@ -1,5 +1,7 @@
 package com.hwl.im.core.imaction;
 
+import java.util.function.Consumer;
+
 import com.hwl.im.core.immode.MessageRequestHeadOperate;
 import com.hwl.im.core.proto.*;
 
@@ -32,6 +34,16 @@ public abstract class AbstractMessageSendExecutor implements MessageSendExecutor
     }
 
     @Override
+    public final void sendResultCallback(boolean isSuccess) {
+        log.debug("Client send request {} , message context : {}", isSuccess ? "success" : "failed",
+                getMessageContext());
+        Consumer<Boolean> callback = sendStatusCallback();
+        if (callback != null) {
+            callback.accept(isSuccess);
+        }
+    }
+
+    @Override
     public boolean isSendFailedAndClose() {
         return false;
     }
@@ -41,6 +53,8 @@ public abstract class AbstractMessageSendExecutor implements MessageSendExecutor
     }
 
     // public abstract boolean checkBody();
+
+    public abstract Consumer<Boolean> sendStatusCallback();
 
     public abstract void setRequestBody(final ImMessageRequest.Builder request);
 

@@ -89,10 +89,8 @@ public class IMClientEntry {
                     messageOperate.send(new HeartBeatMessageSend());
                 }
             });
-            return null;
         }, (msg) -> {
             launcher.stop();
-            return null;
         }));
 
         this.sendCommandDesc();

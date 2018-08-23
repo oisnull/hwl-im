@@ -9,11 +9,9 @@ import com.hwl.im.core.proto.ImMessageType;
 
 public abstract class AbstractMessageListenExecutor<TResponse> implements MessageListenExecutor {
 
-    // private ImMessageType messageType;
-
     @Override
     public final void execute(ImMessageContext messageContext) {
-        ImMessageType  messageType = messageContext.getType();
+        ImMessageType messageType = messageContext.getType();
         ImMessageResponse response = messageContext.getResponse();
 
         if (response != null) {
@@ -23,16 +21,13 @@ public abstract class AbstractMessageListenExecutor<TResponse> implements Messag
             ImMessageResponseHead responseHead = response.getResponseHead();
             if (responseHead.getCode() == ImMessageResponseCode.Success_VALUE) {
                 success(messageResponse);
+            } else if (responseHead.getCode() == ImMessageResponseCode.SessionidInvalid_VALUE) {
+                sessionidInvalid();
             } else {
                 failed(responseHead.getCode(), responseHead.getMessage());
             }
         }
     }
-
-    // @Override
-    // public ImMessageType getMessageType() {
-    //     return messageType;
-    // }
 
     @Override
     public boolean executedAndClose() {
@@ -44,6 +39,10 @@ public abstract class AbstractMessageListenExecutor<TResponse> implements Messag
     public void executeCore(ImMessageType messageType, TResponse response) {
         if (response == null)
             return;
+    }
+
+    public void sessionidInvalid() {
+
     }
 
     public void success(TResponse response) {
