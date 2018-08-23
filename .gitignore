@@ -4,3 +4,7 @@
 
 /target
 /.idea
+/.settings
+/.factorypath
+/.classpath
+/.project
