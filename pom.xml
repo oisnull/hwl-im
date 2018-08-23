@@ -8,7 +8,7 @@
     </properties>
 
     <groupId>com.hwl.im</groupId>
-    <artifactId>im_server</artifactId>
+    <artifactId>hwl-im</artifactId>
     <version>1.0.0</version>
 
     <build>
