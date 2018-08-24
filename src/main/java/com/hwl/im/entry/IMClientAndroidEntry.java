@@ -6,7 +6,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import com.hwl.im.client.ClientMessageOperate;
 import com.hwl.im.client.IMClientHeartbeatTimer;
@@ -180,7 +179,7 @@ public class IMClientAndroidEntry {
 
     }
 
-    static class AndroidClientListener implements IMClientListener {
+   private static class AndroidClientListener implements IMClientListener {
 
         @Override
         public void onBuildConnectionSuccess(String clientAddress, String serverAddress) {
