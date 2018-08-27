@@ -58,6 +58,10 @@ public class IMClientLauncher {
         }
     }
 
+    public String getServerAddress() {
+        return String.format("%s:%d", host, port);
+    }
+
     private void init() {
         workGroup = new NioEventLoopGroup();
 

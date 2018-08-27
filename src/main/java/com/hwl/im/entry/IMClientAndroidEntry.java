@@ -24,12 +24,6 @@ import org.apache.logging.log4j.Logger;
 
 public class IMClientAndroidEntry {
 
-    /**
-     * Function list :
-     * 
-     * 
-     */
-
     static Logger log = LogManager.getLogger(IMClientAndroidEntry.class.getName());
     static int CHECK_TIME_INTERNAL = 5; // s
 
@@ -41,7 +35,6 @@ public class IMClientAndroidEntry {
     static {
         initListenExecutor();
         launcher.registerAction(messageOperate);
-        launcher.registerClientListener(new AndroidClientListener());
     }
 
     static void initListenExecutor() {
@@ -49,7 +42,12 @@ public class IMClientAndroidEntry {
         messageOperate.registerListenExecutor(ImMessageType.ChatGroup, new ChatGroupMessageListen());
     }
 
-    static void startCheckConnect() {
+    public static void registerClientListener(IMClientListener clientListener) {
+        if (clientListener != null)
+            launcher.registerClientListener(clientListener);
+    }
+
+    public static void startCheckConnect() {
         if (checkConnectExecutor.isShutdown()) {
             checkConnectExecutor.schedule(new Runnable() {
                 @Override
@@ -60,7 +58,11 @@ public class IMClientAndroidEntry {
         }
     }
 
-    static void stopCheckConnect() {
+    public static String getServerAddress() {
+        return launcher.getServerAddress();
+    }
+
+    public static void stopCheckConnect() {
         if (checkConnectExecutor.isShutdown())
             return;
         checkConnectExecutor.shutdown();
@@ -98,6 +100,10 @@ public class IMClientAndroidEntry {
         sendConsumer.accept(sendCallback);
     }
 
+    // public static void sendUserValidateMessage(Long userId, String userToken) {
+    // sendUserValidateMessage(userId, userToken, new DefaultSendOperateListener());
+    // }
+
     public static void sendUserValidateMessage(Long userId, String userToken,
             DefaultSendOperateListener operateListener) {
 
@@ -114,30 +120,6 @@ public class IMClientAndroidEntry {
             messageOperate.send(request, response);
 
         });
-
-        // if (!launcher.isConnected()) {
-        // operateListener.unconnect();
-        // return;
-        // }
-        // Consumer<Boolean> sendCallback = new Consumer<Boolean>() {
-
-        // @Override
-        // public void accept(Boolean succ) {
-        // if (!succ) {
-        // operateListener.notSendToServer();
-        // }
-        // }
-        // };
-        // UserValidateSend request = new UserValidateSend(userId, userToken,
-        // sendCallback);
-        // UserValidateListen response = new UserValidateListen(sess -> {
-        // operateListener.success();
-        // startHeartbeat(sess);
-        // }, msg -> {
-        // operateListener.failed(msg);
-        // stopHeartbeat();
-        // });
-        // messageOperate.send(request, response);
     }
 
     private static void startHeartbeat(String sessionId) {
@@ -179,47 +161,14 @@ public class IMClientAndroidEntry {
 
     }
 
-   private static class AndroidClientListener implements IMClientListener {
-
-        @Override
-        public void onBuildConnectionSuccess(String clientAddress, String serverAddress) {
-            log.debug("Client {} connected to server {} successfully.", clientAddress, serverAddress);
-            stopCheckConnect();
-        }
-
-        @Override
-        public void onBuildConnectionError(String clientAddress, String serverAddress, String errorInfo) {
-            log.error("Client {} connected to server {} failure. info :", clientAddress, serverAddress, errorInfo);
-            startCheckConnect();
-        }
-
-        @Override
-        public void onClosed(String clientAddress) {
-            log.debug("Client {} closed", clientAddress);
-            startCheckConnect();
-        }
-
-        @Override
-        public void onDisconnected(String clientAddress) {
-            log.debug("Client {} disconnect", clientAddress);
-            startCheckConnect();
-        }
-
-        @Override
-        public void onError(String clientAddress, String errorInfo) {
-            log.error("An error occurred on the client {}. info : {}", clientAddress, errorInfo);
-            startCheckConnect();
-        }
-
-    }
-
     public static void main(String[] args) {
-        IMClientAndroidEntry.connectServer();
-        IMClientAndroidEntry.sendUserValidateMessage(10000L, "123456", new DefaultSendOperateListener() {
-            @Override
-            public void success() {
-                
-            }
-        });
+        // IMClientAndroidEntry.connectServer();
+        // IMClientAndroidEntry.sendUserValidateMessage(10000L, "123456", new
+        // DefaultSendOperateListener() {
+        // @Override
+        // public void success() {
+
+        // }
+        // });
     }
 }
