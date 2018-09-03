@@ -25,10 +25,10 @@ public class RedisUtil {
 
     private static Logger log = LogManager.getLogger(RedisUtil.class.getName());
 
-    // store db
-    public final static int SESSION_DB = 1;
-    public final static int GROUP_USER_SET_DB = 2;
-    public final static int OFFLINE_MESSAGE_DB = 3;
+    // store db , db config from c# redis config
+    public final static int USER_SESSION_DB = 2;
+    public final static int GROUP_USER_SET_DB = 11;
+    public final static int OFFLINE_MESSAGE_DB = 9;
 
     static {
         initPoolConfig();

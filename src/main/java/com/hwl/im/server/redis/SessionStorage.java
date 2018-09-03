@@ -16,7 +16,7 @@ public class SessionStorage implements OnlineSessionStorageMedia {
         if (userid <= 0)
             return null;
 
-        return RedisUtil.exec(RedisUtil.SESSION_DB, client -> client.get(String.valueOf(userid)));
+        return RedisUtil.exec(RedisUtil.USER_SESSION_DB, client -> client.get(String.valueOf(userid)));
     }
 
     @Override
@@ -26,7 +26,7 @@ public class SessionStorage implements OnlineSessionStorageMedia {
         if (sessionid == null || sessionid.isEmpty())
             return;
 
-        RedisUtil.exec(RedisUtil.SESSION_DB, client -> {
+        RedisUtil.exec(RedisUtil.USER_SESSION_DB, client -> {
             Transaction tran = client.multi();
             try {
                 tran.set(String.valueOf(userid), sessionid);
@@ -47,7 +47,7 @@ public class SessionStorage implements OnlineSessionStorageMedia {
         if (userid <= 0)
             return;
 
-        RedisUtil.exec(RedisUtil.SESSION_DB, client -> {
+        RedisUtil.exec(RedisUtil.USER_SESSION_DB, client -> {
             String sessionid = client.get(String.valueOf(userid));
             if (sessionid != null && !sessionid.isEmpty()) {
                 Transaction tran = client.multi();
@@ -72,7 +72,7 @@ public class SessionStorage implements OnlineSessionStorageMedia {
         if (sessionid == null || sessionid.isEmpty())
             return;
 
-        RedisUtil.exec(RedisUtil.SESSION_DB, client -> {
+        RedisUtil.exec(RedisUtil.USER_SESSION_DB, client -> {
             Long userid = Long.parseLong(client.get(sessionid));
             if (userid > 0) {
                 Transaction tran = client.multi();
