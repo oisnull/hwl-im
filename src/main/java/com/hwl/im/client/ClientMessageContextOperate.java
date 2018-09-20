@@ -2,7 +2,7 @@
 
 // import com.hwl.im.core.imaction.MessageListenExecutor;
 // import com.hwl.im.core.imaction.MessageSendExecutor;
-// import com.hwl.im.core.proto.ImMessageContext;
+// import com.hwl.im.improto.ImMessageContext;
 
 // import io.netty.channel.Channel;
 // import io.netty.channel.ChannelFuture;

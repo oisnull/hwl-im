@@ -3,8 +3,8 @@ package com.hwl.im.entry;
 import java.util.function.Function;
 
 import com.hwl.im.core.imaction.MessageReceiveExecutor;
-import com.hwl.im.core.proto.ImMessageRequest;
-import com.hwl.im.core.proto.ImMessageType;
+import com.hwl.im.improto.ImMessageRequest;
+import com.hwl.im.improto.ImMessageType;
 import com.hwl.im.server.IMServerLauncher;
 import com.hwl.im.server.IMServerLauncherConfig;
 import com.hwl.im.server.receive.ChatGroupMessageReceiveExecutor;

@@ -1,11 +1,11 @@
 
 package com.hwl.im.core.imaction;
 
-import com.hwl.im.core.proto.ImMessageContext;
-import com.hwl.im.core.proto.ImMessageResponse;
-import com.hwl.im.core.proto.ImMessageResponseCode;
-import com.hwl.im.core.proto.ImMessageResponseHead;
-import com.hwl.im.core.proto.ImMessageType;
+import com.hwl.im.improto.ImMessageContext;
+import com.hwl.im.improto.ImMessageResponse;
+import com.hwl.im.improto.ImMessageResponseCode;
+import com.hwl.im.improto.ImMessageResponseHead;
+import com.hwl.im.improto.ImMessageType;
 
 public abstract class AbstractMessageListenExecutor<TResponse> implements MessageListenExecutor {
 

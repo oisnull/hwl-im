@@ -2,7 +2,11 @@ package com.hwl.im.core.imaction;
 
 import com.hwl.im.core.immode.MessageRequestHeadOperate;
 import com.hwl.im.core.immode.RequestSessionInvalidException;
-import com.hwl.im.core.proto.*;
+import com.hwl.im.improto.ImMessageContext;
+import com.hwl.im.improto.ImMessageRequestHead;
+import com.hwl.im.improto.ImMessageResponse;
+import com.hwl.im.improto.ImMessageResponseCode;
+import com.hwl.im.improto.ImMessageResponseHead;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

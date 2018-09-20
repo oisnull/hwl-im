@@ -3,10 +3,10 @@ package com.hwl.im.server.receive;
 import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
 import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.core.proto.ImMessageType;
-import com.hwl.im.core.proto.ImUserValidateRequest;
-import com.hwl.im.core.proto.ImUserValidateResponse;
-import com.hwl.im.core.proto.ImMessageResponse.Builder;
+import com.hwl.im.improto.ImMessageType;
+import com.hwl.im.improto.ImUserValidateRequest;
+import com.hwl.im.improto.ImUserValidateResponse;
+import com.hwl.im.improto.ImMessageResponse.Builder;
 
 public class UserValidateReceiveExecutor extends AbstractMessageReceivExecutor<ImUserValidateRequest> {
 

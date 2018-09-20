@@ -16,7 +16,7 @@ import com.hwl.im.client.send.ChatUserMessageSend;
 import com.hwl.im.client.send.HeartBeatMessageSend;
 import com.hwl.im.client.send.UserValidateSend;
 import com.hwl.im.core.immode.MessageRequestHeadOperate;
-import com.hwl.im.core.proto.ImMessageType;
+import com.hwl.im.improto.ImMessageType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

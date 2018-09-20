@@ -5,8 +5,8 @@ import java.util.function.Function;
 import com.hwl.im.core.imaction.MessageReceiveExecutor;
 import com.hwl.im.core.imom.OnlineSessionStorageMedia;
 import com.hwl.im.core.imstore.OfflineMessageStorageMedia;
-import com.hwl.im.core.proto.ImMessageRequest;
-import com.hwl.im.core.proto.ImMessageType;
+import com.hwl.im.improto.ImMessageRequest;
+import com.hwl.im.improto.ImMessageType;
 
 public class IMServerLauncherConfig {
 

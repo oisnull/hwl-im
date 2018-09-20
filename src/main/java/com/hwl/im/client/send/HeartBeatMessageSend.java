@@ -3,9 +3,9 @@ package com.hwl.im.client.send;
 import java.util.function.Consumer;
 
 import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
-import com.hwl.im.core.proto.ImHeartBeatMessageRequest;
-import com.hwl.im.core.proto.ImMessageRequest.Builder;
-import com.hwl.im.core.proto.ImMessageType;
+import com.hwl.im.improto.ImHeartBeatMessageRequest;
+import com.hwl.im.improto.ImMessageRequest.Builder;
+import com.hwl.im.improto.ImMessageType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

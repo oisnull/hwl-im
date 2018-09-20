@@ -4,14 +4,14 @@ import java.security.InvalidParameterException;
 import java.util.function.Consumer;
 
 import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
-import com.hwl.im.core.proto.ImChatUserMessageContent;
-import com.hwl.im.core.proto.ImChatUserMessageRequest;
-import com.hwl.im.core.proto.ImMessageRequest.Builder;
+import com.hwl.im.improto.ImChatUserMessageContent;
+import com.hwl.im.improto.ImChatUserMessageRequest;
+import com.hwl.im.improto.ImMessageRequest.Builder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.hwl.im.core.proto.ImMessageType;
+import com.hwl.im.improto.ImMessageType;
 
 public class ChatUserMessageSend extends AbstractMessageSendExecutor {
 

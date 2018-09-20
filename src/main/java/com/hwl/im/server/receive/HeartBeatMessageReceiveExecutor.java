@@ -2,9 +2,9 @@ package com.hwl.im.server.receive;
 
 import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
 import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.core.proto.ImHeartBeatMessageRequest;
-import com.hwl.im.core.proto.ImMessageType;
-import com.hwl.im.core.proto.ImMessageResponse.Builder;
+import com.hwl.im.improto.ImHeartBeatMessageRequest;
+import com.hwl.im.improto.ImMessageType;
+import com.hwl.im.improto.ImMessageResponse.Builder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

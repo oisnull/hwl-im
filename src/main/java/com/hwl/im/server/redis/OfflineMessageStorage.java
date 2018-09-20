@@ -3,7 +3,7 @@ package com.hwl.im.server.redis;
 import java.util.List;
 
 import com.hwl.im.core.imstore.OfflineMessageStorageMedia;
-import com.hwl.im.core.proto.ImMessageContext;
+import com.hwl.im.improto.ImMessageContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

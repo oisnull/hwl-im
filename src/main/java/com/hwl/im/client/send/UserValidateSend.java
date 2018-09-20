@@ -1,6 +1,6 @@
 package com.hwl.im.client.send;
 
-import com.hwl.im.core.proto.ImMessageRequest.Builder;
+import com.hwl.im.improto.ImMessageRequest.Builder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.function.Consumer;
 
 import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
-import com.hwl.im.core.proto.ImMessageType;
-import com.hwl.im.core.proto.ImUserValidateRequest;
+import com.hwl.im.improto.ImMessageType;
+import com.hwl.im.improto.ImUserValidateRequest;
 
 public class UserValidateSend extends AbstractMessageSendExecutor {
 

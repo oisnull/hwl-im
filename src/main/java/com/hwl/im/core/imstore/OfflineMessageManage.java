@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.hwl.im.core.proto.ImMessageContext;
+import com.hwl.im.improto.ImMessageContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

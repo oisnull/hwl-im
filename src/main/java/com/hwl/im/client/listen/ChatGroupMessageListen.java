@@ -1,9 +1,9 @@
 package com.hwl.im.client.listen;
 
 import com.hwl.im.core.imaction.AbstractMessageListenExecutor;
-import com.hwl.im.core.proto.ImChatGroupMessageResponse;
-import com.hwl.im.core.proto.ImMessageResponse;
-import com.hwl.im.core.proto.ImMessageType;
+import com.hwl.im.improto.ImChatGroupMessageResponse;
+import com.hwl.im.improto.ImMessageResponse;
+import com.hwl.im.improto.ImMessageType;
 
 public class ChatGroupMessageListen extends AbstractMessageListenExecutor<ImChatGroupMessageResponse> {
 
