@@ -5,19 +5,19 @@ import java.io.IOException;
 public class IMEntry {
 
     /**
-     * windows : 
+     * windows :
      * java -jar hwl-im-1.0.0-jar-with-dependencies.jar imserver 127.0.0.1 8081
      * java -jar hwl-im-1.0.0-jar-with-dependencies.jar imclient 127.0.0.1 8081 10000 123456
-     * 
+     * <p>
      * reset design :
      * core / client / server / entry(console)
-     * 
      */
 
     public static void main(String[] args) throws Exception {
         if (args == null || args.length <= 0) {
-            errorDesc();
-            return;
+//            errorDesc();
+//            return;
+            args = new String[]{"imserver", "192.168.1.4", "8081"};
         }
 
         String firstCmd = args[0].toLowerCase();
