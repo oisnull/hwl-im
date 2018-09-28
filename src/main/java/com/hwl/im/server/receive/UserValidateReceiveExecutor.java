@@ -8,6 +8,8 @@ import com.hwl.im.improto.ImUserValidateRequest;
 import com.hwl.im.improto.ImUserValidateResponse;
 import com.hwl.im.improto.ImMessageResponse.Builder;
 
+import java.util.UUID;
+
 public class UserValidateReceiveExecutor extends AbstractMessageReceivExecutor<ImUserValidateRequest> {
 
     public UserValidateReceiveExecutor(ImUserValidateRequest request) {
@@ -41,27 +43,33 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceivExecutor<I
     @Override
     public void executeCore(Builder response) {
 
-        if (!checkUserInfo()) {
-            response.setUserValidateResponse(
-                    ImUserValidateResponse.newBuilder().setIsSuccess(false).setMessage("Userid or token is invalid").build());
-            return;
-        }
+//        if (!checkUserInfo()) {
+//            response.setUserValidateResponse(
+//                    ImUserValidateResponse.newBuilder().setIsSuccess(false).setMessage("Userid or token is invalid").build());
+//            return;
+//        }
 
         // get user is online or not by userid
         String sessionid = OnlineManage.getInstance().getSession(request.getUserId());
-        if (sessionid == null || sessionid.isEmpty()) {
-            // if not and generate sessionid
-            sessionid = request.getUserId() + "-sessionid-test-001";
-            OnlineManage.getInstance().setChannelSessionid(request.getUserId(), sessionid, channel);
-            response.setUserValidateResponse(
-                    ImUserValidateResponse.newBuilder().setIsSuccess(true).setIsOnline(false).setSessionid(sessionid).build());
-
-            // start offline message push process
-            MessageOperate.serverPush(request.getUserId());
-        } else {
-            response.setUserValidateResponse(
-                    ImUserValidateResponse.newBuilder().setIsSuccess(false).setIsOnline(true).setMessage("User is online").setSessionid(sessionid).build());
+        if (sessionid != null && !sessionid.isEmpty()) {
+            //if user is online
+            //send message to online user
         }
+
+        sessionid = UUID.randomUUID().toString().replace("-", "");//request.getUserId() + "-sessionid-test-001";
+        OnlineManage.getInstance().setChannelSessionid(request.getUserId(), sessionid, channel);
+        response.setUserValidateResponse(
+                ImUserValidateResponse.newBuilder().setIsSuccess(true).setIsOnline(false).setSessionid(sessionid).build());
+
+//        if (sessionid == null || sessionid.isEmpty()) {
+//            // if not and generate sessionid
+//
+//            // start offline message push process
+//            MessageOperate.serverPush(request.getUserId());
+//        } else {
+//            response.setUserValidateResponse(
+//                    ImUserValidateResponse.newBuilder().setIsSuccess(false).setIsOnline(true).setMessage("User is online").setSessionid(sessionid).build());
+//        }
     }
 
     private boolean checkUserInfo() {
