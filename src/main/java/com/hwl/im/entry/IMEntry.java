@@ -17,7 +17,7 @@ public class IMEntry {
         if (args == null || args.length <= 0) {
 //            errorDesc();
 //            return;
-            args = new String[]{"imserver", "192.168.1.4", "8081"};
+            args = new String[]{"imserver", "192.168.16.1", "8081"};
         }
 
         String firstCmd = args[0].toLowerCase();
@@ -35,9 +35,9 @@ public class IMEntry {
         System.out.println(IMServerEntry.SERVER_FORMAT_DESCRIPTION + " / " + IMClientEntry.CLIENT_FORMAT_DESCRIPTION);
     }
 
-    static void functionDesc() {
-        System.out.println("");
-    }
+//    static void functionDesc() {
+//        System.out.println("");
+//    }
 
     static void runServer(String[] args) throws InterruptedException {
         IMServerEntry serverEntry = new IMServerEntry(args);
