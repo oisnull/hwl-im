@@ -1,6 +1,6 @@
 package com.hwl.im.server;
 
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import com.hwl.im.core.imaction.MessageReceiveExecutor;
 import com.hwl.im.core.immode.MessageOperate;
@@ -42,12 +42,10 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
         if (response == null)
             return;
 
-        MessageOperate.send(ctx.channel(), response, new Function<Boolean, Void>() {
-
+        MessageOperate.send(ctx.channel(), response, new Consumer<Boolean>() {
             @Override
-            public Void apply(Boolean succ) {
+            public void accept(Boolean succ) {
                 log.debug("Server response {} :{}", succ, response.toString());
-                return null;
             }
         });
     }

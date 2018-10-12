@@ -68,7 +68,6 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceivExecut
                     } else {
                         log.error("Server push chat group message failed : {}", messageContext.toString());
                     }
-                    return null;
                 });
             } else {
                 // offline

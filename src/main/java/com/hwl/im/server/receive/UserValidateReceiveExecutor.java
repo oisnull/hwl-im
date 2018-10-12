@@ -1,7 +1,6 @@
 package com.hwl.im.server.receive;
 
 import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
-import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.imom.OnlineManage;
 import com.hwl.im.improto.ImMessageType;
 import com.hwl.im.improto.ImUserValidateRequest;

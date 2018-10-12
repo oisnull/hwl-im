@@ -3,7 +3,7 @@ package com.hwl.im.core.imqos;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import com.hwl.im.core.ImCoreConfig;
 import com.hwl.im.core.immode.MessageOperate;
@@ -52,22 +52,20 @@ public class RetryMessageManage {
             return;
         }
 
-        MessageOperate.serverSendAndRetry(retryMessageModel.userid, retryMessageModel.messageContext,
-                new Function<Boolean, Void>() {
+        MessageOperate.serverSendAndRetry(retryMessageModel.userid, retryMessageModel.messageContext, new Consumer<Boolean>() {
 
-                    @Override
-                    public Void apply(Boolean succ) {
-                        if (succ == false) {
-                            retryMessageModel.retryCount++;
-                            retryMessageModel.currentTimeMills = System.currentTimeMillis();
-                            messageContainer.add(retryMessageModel);
-                        }
+            @Override
+            public void accept(Boolean succ) {
+                if (succ == false) {
+                    retryMessageModel.retryCount++;
+                    retryMessageModel.currentTimeMills = System.currentTimeMillis();
+                    messageContainer.add(retryMessageModel);
+                }
 
-                        isRuning = false;
-                        exec();
-                        return null;
-                    }
-                });
+                isRuning = false;
+                exec();
+            }
+        });
     }
 
     public void startup() {
@@ -108,10 +106,10 @@ public class RetryMessageManage {
     }
 
     // public void removeMessage(Long userid) {
-    //     if (userid <= 0)
-    //         return;
+    // if (userid <= 0)
+    // return;
 
-    //     messageContainer.removeIf(f -> f.userid.equals(userid));
+    // messageContainer.removeIf(f -> f.userid.equals(userid));
     // }
 
     private class RetryMessageModel {

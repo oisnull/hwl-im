@@ -46,7 +46,6 @@ public class ChatUserMessageReceiveExecutor extends AbstractMessageReceivExecuto
             } else {
                 log.error("Server push chat user message failed : {}", messageContext.toString());
             }
-            return null;
         });
     }
 

@@ -2,7 +2,7 @@ package com.hwl.im.core.immode;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import com.hwl.im.core.ThreadPoolUtil;
 import com.hwl.im.core.imaction.MessageSendExecutor;
@@ -23,9 +23,9 @@ public class MessageOperate {
     final static Logger log = LogManager.getLogger(MessageOperate.class.getName());
     final static ExecutorService executorService = Executors.newFixedThreadPool(ThreadPoolUtil.ioIntesivePoolSize());
 
-    public static void send(Channel channel, ImMessageContext messageContext, Function<Boolean, Void> callback) {
+    public static void send(Channel channel, ImMessageContext messageContext, Consumer<Boolean> callback) {
         if (channel == null || messageContext == null) {
-            callback.apply(false);
+            callback.accept(false);
             return;
         }
         ChannelFuture channelFuture = channel.writeAndFlush(messageContext);
@@ -34,10 +34,26 @@ public class MessageOperate {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (callback != null)
-                    callback.apply(future.isSuccess());
+                    callback.accept(future.isSuccess());
             }
         });
     }
+
+    // public static void send(Channel channel, ImMessageContext messageContext, Function<Boolean, Void> callback) {
+    //     if (channel == null || messageContext == null) {
+    //         callback.apply(false);
+    //         return;
+    //     }
+    //     ChannelFuture channelFuture = channel.writeAndFlush(messageContext);
+    //     channelFuture.addListener(new ChannelFutureListener() {
+
+    //         @Override
+    //         public void operationComplete(ChannelFuture future) throws Exception {
+    //             if (callback != null)
+    //                 callback.apply(future.isSuccess());
+    //         }
+    //     });
+    // }
 
     public static void clientSend(Channel channel, MessageSendExecutor sendExecutor) {
         if (sendExecutor == null || channel == null)
@@ -61,13 +77,13 @@ public class MessageOperate {
     }
 
     public static void serverSendAndRetry(Long userid, ImMessageContext messageContext,
-            Function<Boolean, Void> callback) {
+    Consumer<Boolean> callback) {
         Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
         if (toUserChannel == null) {
             // offline
             OfflineMessageManage.getInstance().addMessage(userid, messageContext);
             if (callback != null) {
-                callback.apply(true);
+                callback.accept(true);
             }
         } else {
             // online
@@ -82,10 +98,10 @@ public class MessageOperate {
             OfflineMessageManage.getInstance().addMessage(userid, messageContext);
         } else {
             // online
-            send(toUserChannel, messageContext, new Function<Boolean, Void>() {
+            send(toUserChannel, messageContext, new Consumer<Boolean>() {
 
                 @Override
-                public Void apply(Boolean succ) {
+                public void accept(Boolean succ) {
                     if (succ) {
                         if (succCallback != null) {
                             succCallback.run();
@@ -94,7 +110,6 @@ public class MessageOperate {
                         // failed
                         RetryMessageManage.getInstance().addMessage(userid, messageContext);
                     }
-                    return null;
                 }
             });
         }
@@ -121,10 +136,10 @@ public class MessageOperate {
         if (messageContext == null)
             return;
 
-        send(channel, messageContext, new Function<Boolean, Void>() {
+        send(channel, messageContext, new Consumer<Boolean>() {
 
             @Override
-            public Void apply(Boolean succ) {
+            public void accept(Boolean succ) {
                 if (succ) {
                     log.debug("Sever push offline message success : {}", messageContext.toString());
                 } else {
@@ -133,7 +148,6 @@ public class MessageOperate {
                     RetryMessageManage.getInstance().addMessage(userid, messageContext);
                 }
                 serverPushOfflineMessage(userid, channel);
-                return null;
             }
         });
     }
