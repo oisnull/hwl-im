@@ -7,10 +7,7 @@ import com.hwl.im.improto.ImMessageRequest;
 import com.hwl.im.improto.ImMessageType;
 import com.hwl.im.server.IMServerLauncher;
 import com.hwl.im.server.IMServerLauncherConfig;
-import com.hwl.im.server.receive.ChatGroupMessageReceiveExecutor;
-import com.hwl.im.server.receive.ChatUserMessageReceiveExecutor;
-import com.hwl.im.server.receive.HeartBeatMessageReceiveExecutor;
-import com.hwl.im.server.receive.UserValidateReceiveExecutor;
+import com.hwl.im.server.receive.*;
 import com.hwl.im.server.redis.OfflineMessageStorage;
 import com.hwl.im.server.redis.SessionStorage;
 
@@ -107,6 +104,15 @@ public class IMServerEntry {
                     @Override
                     public MessageReceiveExecutor apply(ImMessageRequest t) {
                         return new ChatGroupMessageReceiveExecutor(t.getChatGroupMessageRequest());
+                    }
+                });
+
+        config.registerReceiveExecutor(ImMessageType.AddFriend,
+                new Function<ImMessageRequest, MessageReceiveExecutor>() {
+
+                    @Override
+                    public MessageReceiveExecutor apply(ImMessageRequest t) {
+                        return new AddFriendMessageReceiveExecutor(t.getAddFriendMessageRequest());
                     }
                 });
     }

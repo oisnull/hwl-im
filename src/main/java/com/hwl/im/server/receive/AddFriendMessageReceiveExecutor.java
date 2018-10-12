@@ -4,12 +4,7 @@ import java.security.InvalidParameterException;
 
 import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
 import com.hwl.im.core.immode.MessageOperate;
-import com.hwl.im.improto.ImAddFriendMessageRequest;
-import com.hwl.im.improto.ImAddFriendMessageResponse;
-import com.hwl.im.improto.ImMessageContext;
-import com.hwl.im.improto.ImMessageResponse;
-import com.hwl.im.improto.ImMessageType;
-
+import com.hwl.im.improto.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
