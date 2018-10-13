@@ -11,10 +11,7 @@ import com.hwl.im.client.IMClientLauncher;
 import com.hwl.im.client.listen.ChatGroupMessageListen;
 import com.hwl.im.client.listen.ChatUserMessageListen;
 import com.hwl.im.client.listen.UserValidateListen;
-import com.hwl.im.client.send.ChatGroupMessageSend;
-import com.hwl.im.client.send.ChatUserMessageSend;
-import com.hwl.im.client.send.HeartBeatMessageSend;
-import com.hwl.im.client.send.UserValidateSend;
+import com.hwl.im.client.send.*;
 import com.hwl.im.core.immode.MessageRequestHeadOperate;
 import com.hwl.im.improto.ImMessageType;
 
@@ -105,6 +102,8 @@ public class IMClientEntry {
                         messageOperate.send(new ChatUserMessageSend(userId, Long.parseLong(commands[2]), commands[3]));
                     } else if (commands[0].equals("send") && commands[1].equals("chatgroup")) {
                         messageOperate.send(new ChatGroupMessageSend(userId, commands[2], commands[3]));
+                    } else if (commands[0].equals("send") && commands[1].equals("addfriend")) {
+                        messageOperate.send(new AddFriendMessageSend(userId, "fromusername", "fromuserimage", Long.parseLong(commands[2]), commands[3]));
                     } else {
                         this.sendCommandDesc();
                     }
@@ -124,6 +123,7 @@ public class IMClientEntry {
         System.out.println("ex : ");
         System.out.println("send chatuser 10000 contenttest1");
         System.out.println("send chatgroup groupguid groupcontenttest1");
+        System.out.println("send addfriend 10000 woshi10000");
         System.out.println("----------------------------------------------------------------------------");
 
     }
