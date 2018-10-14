@@ -2,10 +2,10 @@ package com.hwl.im.server.receive;
 
 import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
 import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.improto.ImMessageType;
-import com.hwl.im.improto.ImUserValidateRequest;
-import com.hwl.im.improto.ImUserValidateResponse;
-import com.hwl.im.improto.ImMessageResponse.Builder;
+import com.hwl.imcore.improto.ImMessageType;
+import com.hwl.imcore.improto.ImUserValidateRequest;
+import com.hwl.imcore.improto.ImUserValidateResponse;
+import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
 import java.util.UUID;
 

@@ -1,7 +1,7 @@
 package com.hwl.im.core.immode;
 
 import com.hwl.im.core.ImCoreCommon;
-import com.hwl.im.improto.ImMessageRequestHead;
+import com.hwl.imcore.improto.ImMessageRequestHead;
 
 public class MessageRequestHeadOperate {
 

@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.hwl.im.core.imaction.MessageReceiveExecutor;
-import com.hwl.im.improto.ImMessageContext;
-import com.hwl.im.improto.ImMessageRequest;
-import com.hwl.im.improto.ImMessageType;
+import com.hwl.imcore.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageRequest;
+import com.hwl.imcore.improto.ImMessageType;
 
 public class MessageExecuteFactory {
     private static Map<ImMessageType, Function<ImMessageRequest, MessageReceiveExecutor>> receiveExecutors = new HashMap<>();

@@ -5,8 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.hwl.im.core.imaction.MessageListenExecutor;
 import com.hwl.im.core.imaction.MessageSendExecutor;
 import com.hwl.im.core.immode.MessageOperate;
-import com.hwl.im.improto.ImMessageContext;
-import com.hwl.im.improto.ImMessageType;
+import com.hwl.imcore.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageType;
 
 import io.netty.channel.Channel;
 

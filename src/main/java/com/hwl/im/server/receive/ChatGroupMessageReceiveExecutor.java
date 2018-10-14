@@ -4,12 +4,12 @@ import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
 import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.imom.OnlineManage;
 import com.hwl.im.core.imstore.OfflineMessageManage;
-import com.hwl.im.improto.ImChatGroupMessageContent;
-import com.hwl.im.improto.ImChatGroupMessageRequest;
-import com.hwl.im.improto.ImChatGroupMessageResponse;
-import com.hwl.im.improto.ImMessageContext;
-import com.hwl.im.improto.ImMessageType;
-import com.hwl.im.improto.ImMessageResponse.Builder;
+import com.hwl.imcore.improto.ImChatGroupMessageContent;
+import com.hwl.imcore.improto.ImChatGroupMessageRequest;
+import com.hwl.imcore.improto.ImChatGroupMessageResponse;
+import com.hwl.imcore.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageType;
+import com.hwl.imcore.improto.ImMessageResponse.Builder;
 import com.hwl.im.server.redis.GroupStorage;
 
 import org.apache.logging.log4j.LogManager;

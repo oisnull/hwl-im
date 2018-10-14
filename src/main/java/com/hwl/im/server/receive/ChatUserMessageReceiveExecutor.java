@@ -2,11 +2,11 @@ package com.hwl.im.server.receive;
 
 import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
 import com.hwl.im.core.immode.MessageOperate;
-import com.hwl.im.improto.ImChatUserMessageRequest;
-import com.hwl.im.improto.ImChatUserMessageResponse;
-import com.hwl.im.improto.ImMessageContext;
-import com.hwl.im.improto.ImMessageType;
-import com.hwl.im.improto.ImMessageResponse.Builder;
+import com.hwl.imcore.improto.ImChatUserMessageRequest;
+import com.hwl.imcore.improto.ImChatUserMessageResponse;
+import com.hwl.imcore.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageType;
+import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

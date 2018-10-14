@@ -13,7 +13,7 @@ import com.hwl.im.client.listen.ChatUserMessageListen;
 import com.hwl.im.client.listen.UserValidateListen;
 import com.hwl.im.client.send.*;
 import com.hwl.im.core.immode.MessageRequestHeadOperate;
-import com.hwl.im.improto.ImMessageType;
+import com.hwl.imcore.improto.ImMessageType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -103,6 +103,7 @@ public class IMClientEntry {
                     } else if (commands[0].equals("send") && commands[1].equals("chatgroup")) {
                         messageOperate.send(new ChatGroupMessageSend(userId, commands[2], commands[3]));
                     } else if (commands[0].equals("send") && commands[1].equals("addfriend")) {
+                        //send addfriend 2 woshi222
                         messageOperate.send(new AddFriendMessageSend(userId, "fromusername", "fromuserimage", Long.parseLong(commands[2]), commands[3]));
                     } else {
                         this.sendCommandDesc();

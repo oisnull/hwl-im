@@ -9,7 +9,7 @@ import com.hwl.im.core.imaction.MessageSendExecutor;
 import com.hwl.im.core.imom.OnlineManage;
 import com.hwl.im.core.imqos.RetryMessageManage;
 import com.hwl.im.core.imstore.OfflineMessageManage;
-import com.hwl.im.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

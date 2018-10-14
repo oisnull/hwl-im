@@ -6,8 +6,8 @@ public class IMEntry {
 
     /**
      * windows :
-     * java -jar hwl-im-1.0.0-jar-with-dependencies.jar imserver 127.0.0.1 8081
-     * java -jar hwl-im-1.0.0-jar-with-dependencies.jar imclient 127.0.0.1 8081 10000 123456
+     * java -jar hwl-im-1.0.0-jar-with-dependencies.jar imserver 192.168.5.7 8081
+     * java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imclient 192.168.5.7 8081 10000 123456
      * <p>
      * reset design :
      * core / client / server / entry(console)
@@ -17,7 +17,7 @@ public class IMEntry {
         if (args == null || args.length <= 0) {
 //            errorDesc();
 //            return;
-            args = new String[]{"imserver", "192.168.16.1", "8081"};
+            args = new String[]{"imserver", "192.168.5.7", "8081"};
         }
 
         String firstCmd = args[0].toLowerCase();

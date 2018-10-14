@@ -1,10 +1,10 @@
 package com.hwl.im.client.send;
 
 import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
-import com.hwl.im.improto.ImAddFriendMessageContent;
-import com.hwl.im.improto.ImAddFriendMessageRequest;
-import com.hwl.im.improto.ImMessageRequest;
-import com.hwl.im.improto.ImMessageType;
+import com.hwl.imcore.improto.ImAddFriendMessageContent;
+import com.hwl.imcore.improto.ImAddFriendMessageRequest;
+import com.hwl.imcore.improto.ImMessageRequest;
+import com.hwl.imcore.improto.ImMessageType;
 
 import java.util.function.Consumer;
 

@@ -3,7 +3,7 @@ package com.hwl.im.server.redis;
 import java.util.List;
 
 import com.hwl.im.core.imstore.OfflineMessageStorageMedia;
-import com.hwl.im.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +13,7 @@ public class OfflineMessageStorage implements OfflineMessageStorageMedia {
     static Logger log = LogManager.getLogger(OfflineMessageStorage.class.getName());
 
     private static byte[] getStoreKey(Long userid) {
-        return String.format("offmsg:%d", userid).getBytes();
+        return String.format("offlinemsg:%d", userid).getBytes();
     }
 
     @Override
@@ -21,8 +21,7 @@ public class OfflineMessageStorage implements OfflineMessageStorageMedia {
         if (userid <= 0 || messageContext == null)
             return;
 
-        log.debug("Server userid({}) is offline and add message to redis , message content : {}", userid,
-                messageContext.toString());
+        log.debug("Server userid({}) is offline and add message to redis", userid);
 
         RedisUtil.exec(RedisUtil.OFFLINE_MESSAGE_DB,
                 client -> client.lpush(getStoreKey(userid), messageContext.toByteArray()));

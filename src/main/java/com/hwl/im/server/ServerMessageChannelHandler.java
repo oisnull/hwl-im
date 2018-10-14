@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import com.hwl.im.core.imaction.MessageReceiveExecutor;
 import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +35,7 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
         MessageReceiveExecutor receiveExecutor = MessageExecuteFactory.create(msg);
         if (receiveExecutor == null)
             return;
-        log.debug("Server request : {}", msg.toString());
+        log.debug("Server channel read : {}", msg.toString());
 
         receiveExecutor.setChannel(ctx.channel());
         ImMessageContext response = receiveExecutor.execute();

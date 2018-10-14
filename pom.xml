@@ -12,14 +12,14 @@
     <version>1.0.0</version>
 
     <repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <build>
-        <finalName>hwl-im-1.0.0</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -34,6 +34,7 @@
                 <configuration>
                     <source>8</source>
                     <target>8</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -110,6 +111,12 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>2.9.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.oisnull</groupId>
+            <artifactId>hwl-im-core</artifactId>
+            <version>1.0.101</version>
         </dependency>
     </dependencies>
 </project>
