@@ -99,6 +99,7 @@ public class IMClientEntry {
                 String[] commands = inputText.split(" ");
                 if (commands.length >= 4) {
                     if (commands[0].equals("send") && commands[1].equals("chatuser")) {
+                        //send chatuser 2 nihao
                         messageOperate.send(new ChatUserMessageSend(userId, Long.parseLong(commands[2]), commands[3]));
                     } else if (commands[0].equals("send") && commands[1].equals("chatgroup")) {
                         messageOperate.send(new ChatGroupMessageSend(userId, commands[2], commands[3]));
