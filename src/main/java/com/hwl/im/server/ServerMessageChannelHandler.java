@@ -1,11 +1,11 @@
 package com.hwl.im.server;
 
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import com.hwl.im.core.imaction.MessageReceiveExecutor;
 import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.core.proto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,19 +35,17 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
         MessageReceiveExecutor receiveExecutor = MessageExecuteFactory.create(msg);
         if (receiveExecutor == null)
             return;
-        log.debug("Server request : {}", msg.toString());
+        log.debug("Server channel read : {}", msg.toString());
 
         receiveExecutor.setChannel(ctx.channel());
         ImMessageContext response = receiveExecutor.execute();
         if (response == null)
             return;
 
-        MessageOperate.send(ctx.channel(), response, new Function<Boolean, Void>() {
-
+        MessageOperate.send(ctx.channel(), response, new Consumer<Boolean>() {
             @Override
-            public Void apply(Boolean succ) {
+            public void accept(Boolean succ) {
                 log.debug("Server response {} :{}", succ, response.toString());
-                return null;
             }
         });
     }

@@ -3,16 +3,14 @@ package com.hwl.im.entry;
 import java.util.function.Function;
 
 import com.hwl.im.core.imaction.MessageReceiveExecutor;
-import com.hwl.im.core.proto.ImMessageRequest;
-import com.hwl.im.core.proto.ImMessageType;
+import com.hwl.imcore.improto.ImMessageRequest;
+import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.im.server.IMServerLauncher;
 import com.hwl.im.server.IMServerLauncherConfig;
-import com.hwl.im.server.receive.ChatGroupMessageReceiveExecutor;
-import com.hwl.im.server.receive.ChatUserMessageReceiveExecutor;
-import com.hwl.im.server.receive.HeartBeatMessageReceiveExecutor;
-import com.hwl.im.server.receive.UserValidateReceiveExecutor;
+import com.hwl.im.server.receive.*;
 import com.hwl.im.server.redis.OfflineMessageStorage;
 import com.hwl.im.server.redis.SessionStorage;
+import com.hwl.imcore.improto.ImTestConnectionMessageRequest;
 
 public class IMServerEntry {
 
@@ -62,7 +60,7 @@ public class IMServerEntry {
     public void bind() throws InterruptedException {
         if (!isValid)
             return;
-            
+
         IMServerLauncherConfig config = new IMServerLauncherConfig();
         config.sessionStorageMedia = new SessionStorage();
         config.messageStorageMedia = new OfflineMessageStorage();
@@ -108,6 +106,24 @@ public class IMServerEntry {
                     public MessageReceiveExecutor apply(ImMessageRequest t) {
                         return new ChatGroupMessageReceiveExecutor(t.getChatGroupMessageRequest());
                     }
+                });
+
+        config.registerReceiveExecutor(ImMessageType.AddFriend,
+                new Function<ImMessageRequest, MessageReceiveExecutor>() {
+
+                    @Override
+                    public MessageReceiveExecutor apply(ImMessageRequest t) {
+                        return new AddFriendMessageReceiveExecutor(t.getAddFriendMessageRequest());
+                    }
+                });
+
+        config.registerReceiveExecutor(ImMessageType.TestConnection,
+                new Function<ImMessageRequest, MessageReceiveExecutor>() {
+                    @Override
+                    public MessageReceiveExecutor apply(ImMessageRequest t) {
+                        return new TestConnectionMessageReceiveExecutor(t.getTestConnectionMessageRequest());
+                    }
+
                 });
     }
 }

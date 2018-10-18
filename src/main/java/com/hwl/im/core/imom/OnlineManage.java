@@ -65,7 +65,7 @@ public class OnlineManage {
     public void removeChannel(Channel channel) {
         synchronized (onlineChannels) {
             String key = channel.attr(USER_SESSION_IDENTITY_ATTR).get();
-            log.debug("Remove channel : key is {}", key);
+//            log.debug("Remove channel : key is {}", key);
             if (key != null) {
                 sessionManager.removeSession(key);
                 onlineChannels.remove(key);

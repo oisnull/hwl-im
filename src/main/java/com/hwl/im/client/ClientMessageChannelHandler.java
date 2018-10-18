@@ -1,9 +1,6 @@
 package com.hwl.im.client;
 
-import com.hwl.im.core.proto.ImMessageContext;
-
-// import org.apache.logging.log4j.LogManager;
-// import org.apache.logging.log4j.Logger;
+import com.hwl.imcore.improto.ImMessageContext;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

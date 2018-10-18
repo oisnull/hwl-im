@@ -3,8 +3,8 @@ package com.hwl.im.client.listen;
 import java.util.function.Consumer;
 
 import com.hwl.im.core.imaction.AbstractMessageListenExecutor;
-import com.hwl.im.core.proto.ImMessageResponse;
-import com.hwl.im.core.proto.ImUserValidateResponse;
+import com.hwl.imcore.improto.ImMessageResponse;
+import com.hwl.imcore.improto.ImUserValidateResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

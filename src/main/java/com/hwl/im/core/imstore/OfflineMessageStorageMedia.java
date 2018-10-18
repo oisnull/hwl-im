@@ -2,7 +2,7 @@ package com.hwl.im.core.imstore;
 
 import java.util.List;
 
-import com.hwl.im.core.proto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageContext;
 
 public interface OfflineMessageStorageMedia {
 

@@ -2,11 +2,11 @@ package com.hwl.im.server.receive;
 
 import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
 import com.hwl.im.core.immode.MessageOperate;
-import com.hwl.im.core.proto.ImChatUserMessageRequest;
-import com.hwl.im.core.proto.ImChatUserMessageResponse;
-import com.hwl.im.core.proto.ImMessageContext;
-import com.hwl.im.core.proto.ImMessageType;
-import com.hwl.im.core.proto.ImMessageResponse.Builder;
+import com.hwl.imcore.improto.ImChatUserMessageRequest;
+import com.hwl.imcore.improto.ImChatUserMessageResponse;
+import com.hwl.imcore.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageType;
+import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +46,6 @@ public class ChatUserMessageReceiveExecutor extends AbstractMessageReceivExecuto
             } else {
                 log.error("Server push chat user message failed : {}", messageContext.toString());
             }
-            return null;
         });
     }
 

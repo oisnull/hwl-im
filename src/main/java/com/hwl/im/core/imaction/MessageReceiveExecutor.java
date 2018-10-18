@@ -1,8 +1,8 @@
 package com.hwl.im.core.imaction;
 
-import com.hwl.im.core.proto.ImMessageContext;
-import com.hwl.im.core.proto.ImMessageRequestHead;
-import com.hwl.im.core.proto.ImMessageType;
+import com.hwl.imcore.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageRequestHead;
+import com.hwl.imcore.improto.ImMessageType;
 
 import io.netty.channel.Channel;
 

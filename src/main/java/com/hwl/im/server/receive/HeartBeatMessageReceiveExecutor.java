@@ -2,9 +2,9 @@ package com.hwl.im.server.receive;
 
 import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
 import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.core.proto.ImHeartBeatMessageRequest;
-import com.hwl.im.core.proto.ImMessageType;
-import com.hwl.im.core.proto.ImMessageResponse.Builder;
+import com.hwl.imcore.improto.ImHeartBeatMessageRequest;
+import com.hwl.imcore.improto.ImMessageType;
+import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,10 +25,10 @@ public class HeartBeatMessageReceiveExecutor extends AbstractMessageReceivExecut
     @Override
     public void executeCore(Builder response) {
         if (!OnlineManage.getInstance().isOnline(requestHead.getSessionid())) {
-            log.debug("Server heartbeat : user is offline , client will be close!");
+            log.debug("Server heartbeat : user {} is offline , client will be close!", request.getFromUserId());
             channel.close();
         } else {
-            log.debug("Server heartbeat : user is online , {}", request.getCurrentTime());
+            log.debug("Server heartbeat : user {} is online , {}", request.getFromUserId(), request.getCurrentTime());
         }
     }
 }

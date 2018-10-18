@@ -3,7 +3,9 @@ package com.hwl.im.core.imaction;
 import java.util.function.Consumer;
 
 import com.hwl.im.core.immode.MessageRequestHeadOperate;
-import com.hwl.im.core.proto.*;
+import com.hwl.imcore.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageRequest;
+import com.hwl.imcore.improto.ImMessageRequestHead;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

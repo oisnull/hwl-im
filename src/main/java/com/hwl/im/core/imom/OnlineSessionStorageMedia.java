@@ -5,7 +5,7 @@ public interface OnlineSessionStorageMedia {
 
     void setSession(Long userid, String sessionid);
 
-    void removeSession(Long userid);
+//    void removeSession(Long userid);
 
     void removeSession(String sessionid);
 }

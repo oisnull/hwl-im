@@ -30,14 +30,14 @@ public class OnlineSessionMemoryManage implements OnlineSessionStorageMedia {
         onlineSessions.put(userid, sessionid);
     }
 
-    @Override
-    public void removeSession(Long userid) {
-        if (userid <= 0) {
-            log.error("removeSession : userid = {}", userid);
-            return;
-        }
-        onlineSessions.remove(userid);
-    }
+//    @Override
+//    public void removeSession(Long userid) {
+//        if (userid <= 0) {
+//            log.error("removeSession : userid = {}", userid);
+//            return;
+//        }
+//        onlineSessions.remove(userid);
+//    }
 
     @Override
     public void removeSession(String sessionid) {

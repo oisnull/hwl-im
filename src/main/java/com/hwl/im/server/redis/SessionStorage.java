@@ -42,30 +42,30 @@ public class SessionStorage implements OnlineSessionStorageMedia {
         });
     }
 
-    @Override
-    public void removeSession(Long userid) {
-        if (userid <= 0)
-            return;
-
-        RedisUtil.exec(RedisUtil.USER_SESSION_DB, client -> {
-            String sessionid = client.get(String.valueOf(userid));
-            if (sessionid != null && !sessionid.isEmpty()) {
-                Transaction tran = client.multi();
-                try {
-                    client.del(String.valueOf(userid));
-                    client.del(sessionid);
-                    tran.exec();
-                    log.debug("Remove user session success , userid:{} ,sessionid:{}", userid, sessionid);
-                } catch (Exception e) {
-                    tran.discard();
-                    log.debug("Remove user session failed , userid:{} ,sessionid:{} , error info : {}", userid,
-                            sessionid, e.getMessage());
-                }
-            }
-
-            return null;
-        });
-    }
+//    @Override
+//    public void removeSession(Long userid) {
+//        if (userid <= 0)
+//            return;
+//
+//        RedisUtil.exec(RedisUtil.USER_SESSION_DB, client -> {
+//            String sessionid = client.get(String.valueOf(userid));
+//            if (sessionid != null && !sessionid.isEmpty()) {
+//                Transaction tran = client.multi();
+//                try {
+//                    tran.del(String.valueOf(userid));
+//                    tran.del(sessionid);
+//                    tran.exec();
+//                    log.debug("Remove user session success , userid:{} ,sessionid:{}", userid, sessionid);
+//                } catch (Exception e) {
+//                    tran.discard();
+//                    log.debug("Remove user session failed , userid:{} ,sessionid:{} , error info : {}", userid,
+//                            sessionid, e.getMessage());
+//                }
+//            }
+//
+//            return null;
+//        });
+//    }
 
     @Override
     public void removeSession(String sessionid) {
@@ -77,8 +77,8 @@ public class SessionStorage implements OnlineSessionStorageMedia {
             if (userid > 0) {
                 Transaction tran = client.multi();
                 try {
-                    client.del(String.valueOf(userid));
-                    client.del(sessionid);
+                    tran.del(String.valueOf(userid));
+                    tran.del(sessionid);
                     tran.exec();
                     log.debug("Remove user session success , userid:{} ,sessionid:{}", userid, sessionid);
                 } catch (Exception e) {

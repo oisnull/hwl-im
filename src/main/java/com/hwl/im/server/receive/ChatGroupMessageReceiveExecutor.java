@@ -4,12 +4,12 @@ import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
 import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.imom.OnlineManage;
 import com.hwl.im.core.imstore.OfflineMessageManage;
-import com.hwl.im.core.proto.ImChatGroupMessageContent;
-import com.hwl.im.core.proto.ImChatGroupMessageRequest;
-import com.hwl.im.core.proto.ImChatGroupMessageResponse;
-import com.hwl.im.core.proto.ImMessageContext;
-import com.hwl.im.core.proto.ImMessageType;
-import com.hwl.im.core.proto.ImMessageResponse.Builder;
+import com.hwl.imcore.improto.ImChatGroupMessageContent;
+import com.hwl.imcore.improto.ImChatGroupMessageRequest;
+import com.hwl.imcore.improto.ImChatGroupMessageResponse;
+import com.hwl.imcore.improto.ImMessageContext;
+import com.hwl.imcore.improto.ImMessageType;
+import com.hwl.imcore.improto.ImMessageResponse.Builder;
 import com.hwl.im.server.redis.GroupStorage;
 
 import org.apache.logging.log4j.LogManager;
@@ -68,7 +68,6 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceivExecut
                     } else {
                         log.error("Server push chat group message failed : {}", messageContext.toString());
                     }
-                    return null;
                 });
             } else {
                 // offline
