@@ -25,10 +25,10 @@ public class HeartBeatMessageReceiveExecutor extends AbstractMessageReceivExecut
     @Override
     public void executeCore(Builder response) {
         if (!OnlineManage.getInstance().isOnline(requestHead.getSessionid())) {
-            log.debug("Server heartbeat : user is offline , client will be close!");
+            log.debug("Server heartbeat : user {} is offline , client will be close!", request.getFromUserId());
             channel.close();
         } else {
-            log.debug("Server heartbeat : user is online , {}", request.getCurrentTime());
+            log.debug("Server heartbeat : user {} is online , {}", request.getFromUserId(), request.getCurrentTime());
         }
     }
 }
