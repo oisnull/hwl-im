@@ -42,9 +42,9 @@ public class ChatUserMessageReceiveExecutor extends AbstractMessageReceivExecuto
         Long userid = request.getChatUserMessageContent().getToUserId();
         MessageOperate.serverSendAndRetry(userid, messageContext, (succ) -> {
             if (succ) {
-                log.debug("Server push chat user message success : {}", messageContext.toString());
+                log.debug("Server push chat user({}) message success : {}", userid, messageContext.toString());
             } else {
-                log.error("Server push chat user message failed : {}", messageContext.toString());
+                log.error("Server push chat user({}) message failed : {}", userid, messageContext.toString());
             }
         });
     }

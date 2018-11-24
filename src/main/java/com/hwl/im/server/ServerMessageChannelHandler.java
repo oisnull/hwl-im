@@ -52,12 +52,12 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        log.debug("Server active: {}", ctx.channel().remoteAddress());
+        log.debug("Server channel active: remote client {} connect", ctx.channel().remoteAddress());
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.debug("Server inactive: {}", ctx.channel().remoteAddress());
+        log.debug("Server channel inactive: remote client {} disconnect ", ctx.channel().remoteAddress());
         OnlineManage.getInstance().removeChannel(ctx.channel());
     }
 

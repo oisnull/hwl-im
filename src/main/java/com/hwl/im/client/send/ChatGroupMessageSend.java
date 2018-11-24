@@ -37,7 +37,7 @@ public class ChatGroupMessageSend extends AbstractMessageSendExecutor {
     @Override
     public void setRequestBody(Builder request) {
         ImChatGroupMessageContent messageContent = ImChatGroupMessageContent.newBuilder().setFromUserId(fromUserId)
-                .setToGrouopGuid(groupGuid).setContent(content).build();
+                .setToGroupGuid(groupGuid).setContent(content).build();
         request.setChatGroupMessageRequest(
                 ImChatGroupMessageRequest.newBuilder().setChatGroupMessageContent(messageContent).build());
     }

@@ -39,7 +39,7 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceivExecut
         } else {
             groupMessageContent = request.getChatGroupMessageContent();
         }
-        if (groupMessageContent.getToGrouopGuid() == null || groupMessageContent.getToGrouopGuid().isEmpty()) {
+        if (groupMessageContent.getToGroupGuid() == null || groupMessageContent.getToGroupGuid().isEmpty()) {
             throw new NullPointerException("GroupGuid");
         }
     }
@@ -55,9 +55,12 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceivExecut
         // check user list is online
         // online user then send msg
         // offline user then set msg
-        List<Long> userIds = GroupStorage.getGroupUsers(groupMessageContent.getToGrouopGuid());
+        List<Long> userIds = GroupStorage.getGroupUsers(groupMessageContent.getToGroupGuid());
         if (userIds == null || userIds.size() <= 0)
             return;
+
+        //remove current userid
+        userIds.remove(groupMessageContent.getFromUserId());
 
         for (Long userid : userIds) {
             if (OnlineManage.getInstance().isOnline(userid)) {

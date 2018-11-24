@@ -33,8 +33,10 @@ public class MessageOperate {
 
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
-                if (callback != null)
+                if (callback != null) {
+                    log.debug("Server channel complete operate {}", future.isSuccess());
                     callback.accept(future.isSuccess());
+                }
             }
         });
     }
@@ -77,13 +79,13 @@ public class MessageOperate {
     }
 
     public static void serverSendAndRetry(Long userid, ImMessageContext messageContext,
-    Consumer<Boolean> callback) {
+                                          Consumer<Boolean> callback) {
         Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
         if (toUserChannel == null) {
             // offline
             OfflineMessageManage.getInstance().addMessage(userid, messageContext);
             if (callback != null) {
-                callback.accept(true);
+                callback.accept(false);
             }
         } else {
             // online
@@ -108,7 +110,7 @@ public class MessageOperate {
                         }
                     } else {
                         // failed
-                        RetryMessageManage.getInstance().addMessage(userid, messageContext);
+                        RetryMessageManage.getInstance().addMessage(userid, messageContext, false);
                     }
                 }
             });
@@ -145,7 +147,7 @@ public class MessageOperate {
                 } else {
                     log.debug("Sever push offline message failed : {}", messageContext.toString());
                     // failed
-                    RetryMessageManage.getInstance().addMessage(userid, messageContext);
+                    RetryMessageManage.getInstance().addMessage(userid, messageContext, true);
                 }
                 serverPushOfflineMessage(userid, channel);
             }

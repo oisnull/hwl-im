@@ -1,7 +1,9 @@
 package com.hwl.im.server.receive;
 
 import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
+import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.imom.OnlineManage;
+import com.hwl.im.server.redis.TokenStorage;
 import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.imcore.improto.ImUserValidateRequest;
 import com.hwl.imcore.improto.ImUserValidateResponse;
@@ -42,11 +44,11 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceivExecutor<I
     @Override
     public void executeCore(Builder response) {
 
-//        if (!checkUserInfo()) {
-//            response.setUserValidateResponse(
-//                    ImUserValidateResponse.newBuilder().setIsSuccess(false).setMessage("Userid or token is invalid").build());
-//            return;
-//        }
+        if (!checkUserInfo()) {
+            response.setUserValidateResponse(
+                    ImUserValidateResponse.newBuilder().setIsSuccess(false).setMessage("Userid or token is invalid").build());
+            return;
+        }
 
         // get user is online or not by userid
         String sessionid = OnlineManage.getInstance().getSession(request.getUserId());
@@ -60,19 +62,12 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceivExecutor<I
         response.setUserValidateResponse(
                 ImUserValidateResponse.newBuilder().setIsSuccess(true).setIsOnline(false).setSessionid(sessionid).build());
 
-//        if (sessionid == null || sessionid.isEmpty()) {
-//            // if not and generate sessionid
-//
-//            // start offline message push process
-//            MessageOperate.serverPush(request.getUserId());
-//        } else {
-//            response.setUserValidateResponse(
-//                    ImUserValidateResponse.newBuilder().setIsSuccess(false).setIsOnline(true).setMessage("User is online").setSessionid(sessionid).build());
-//        }
+        // start offline message push process
+        MessageOperate.serverPush(request.getUserId());
     }
 
     private boolean checkUserInfo() {
-        return request.getToken().equals("123456");
+        return request.getToken().equals(TokenStorage.getUserToken(request.getUserId()));
     }
 
 }

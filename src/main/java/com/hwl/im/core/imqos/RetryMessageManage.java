@@ -91,7 +91,7 @@ public class RetryMessageManage {
         }
     }
 
-    public void addMessage(Long userid, ImMessageContext messageContext) {
+    public void addMessage(Long userid, ImMessageContext messageContext,boolean isAddFirst) {
         if (userid <= 0 || messageContext == null)
             return;
 
@@ -102,7 +102,11 @@ public class RetryMessageManage {
         messageModel.messageContext = messageContext;
         messageModel.retryCount = 0;
         messageModel.currentTimeMills = 0L;
-        messageContainer.add(messageModel);
+        if(isAddFirst){
+            messageContainer.addFirst(messageModel);
+        }else{
+            messageContainer.add(messageModel);
+        }
     }
 
     // public void removeMessage(Long userid) {

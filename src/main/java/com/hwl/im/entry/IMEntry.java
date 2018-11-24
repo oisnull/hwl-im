@@ -17,7 +17,7 @@ public class IMEntry {
         if (args == null || args.length <= 0) {
 //            errorDesc();
 //            return;
-            args = new String[]{"imserver", "192.168.5.7", "8081"};
+            args = new String[]{"imserver", "192.168.5.8", "8081"};
         }
 
         String firstCmd = args[0].toLowerCase();
