@@ -13,14 +13,14 @@ import org.apache.logging.log4j.Logger;
 
 import io.netty.channel.Channel;
 
-public abstract class AbstractMessageReceivExecutor<TRequest> implements MessageReceiveExecutor {
-    private static Logger log = LogManager.getLogger(AbstractMessageReceivExecutor.class.getName());
+public abstract class AbstractMessageReceiveExecutor<TRequest> implements MessageReceiveExecutor {
+    private static Logger log = LogManager.getLogger(AbstractMessageReceiveExecutor.class.getName());
 
     protected ImMessageRequestHead requestHead;
     protected TRequest request;
     protected Channel channel;
 
-    public AbstractMessageReceivExecutor(TRequest request) {
+    public AbstractMessageReceiveExecutor(TRequest request) {
         this.request = request;
     }
 
@@ -50,6 +50,7 @@ public abstract class AbstractMessageReceivExecutor<TRequest> implements Message
     public final ImMessageContext execute() {
         ImMessageResponseHead.Builder responseHead = ImMessageResponseHead.newBuilder();
         responseHead.setCode(ImMessageResponseCode.Success_VALUE).setMessage("");
+        responseHead.setIsAck(isAck());
 
         ImMessageResponse.Builder msgResponse = ImMessageResponse.newBuilder().setResponseHead(responseHead);
 
@@ -73,6 +74,10 @@ public abstract class AbstractMessageReceivExecutor<TRequest> implements Message
 
     protected ImMessageContext getMessageContext(ImMessageResponse.Builder response) {
         return ImMessageContext.newBuilder().setResponse(response).setType(getMessageType()).build();
+    }
+
+    protected boolean isAck() {
+        return false;
     }
 
     public boolean isResponseNull() {

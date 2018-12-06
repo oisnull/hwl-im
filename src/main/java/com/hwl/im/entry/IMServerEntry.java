@@ -125,5 +125,14 @@ public class IMServerEntry {
                     }
 
                 });
+
+        config.registerReceiveExecutor(ImMessageType.ClientAckMessage,
+                new Function<ImMessageRequest, MessageReceiveExecutor>() {
+                    @Override
+                    public MessageReceiveExecutor apply(ImMessageRequest t) {
+                        return new AckMessageReceiveExecutor(t.getAckMessageRequest());
+                    }
+
+                });
     }
 }

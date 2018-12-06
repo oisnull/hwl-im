@@ -1,6 +1,6 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
+import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
 import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.imcore.improto.ImChatUserMessageRequest;
 import com.hwl.imcore.improto.ImChatUserMessageResponse;
@@ -11,7 +11,7 @@ import com.hwl.imcore.improto.ImMessageResponse.Builder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ChatUserMessageReceiveExecutor extends AbstractMessageReceivExecutor<ImChatUserMessageRequest> {
+public class ChatUserMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImChatUserMessageRequest> {
 
     static Logger log = LogManager.getLogger(ChatUserMessageReceiveExecutor.class.getName());
 
@@ -26,6 +26,11 @@ public class ChatUserMessageReceiveExecutor extends AbstractMessageReceivExecuto
             throw new NullPointerException("ChatUserMessageContent");
         if (request.getChatUserMessageContent().getToUserId() <= 0)
             throw new NullPointerException("toUserId");
+    }
+
+    @Override
+    protected boolean isAck() {
+        return true;
     }
 
     @Override

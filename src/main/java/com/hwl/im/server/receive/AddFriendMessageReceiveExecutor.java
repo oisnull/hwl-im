@@ -2,7 +2,7 @@ package com.hwl.im.server.receive;
 
 import java.security.InvalidParameterException;
 
-import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
+import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
 import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.imcore.improto.ImAddFriendMessageResponse;
 import com.hwl.imcore.improto.ImMessageContext;
@@ -12,7 +12,7 @@ import com.hwl.imcore.improto.ImAddFriendMessageRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AddFriendMessageReceiveExecutor extends AbstractMessageReceivExecutor<ImAddFriendMessageRequest> {
+public class AddFriendMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImAddFriendMessageRequest> {
     
     static Logger log = LogManager.getLogger(AddFriendMessageReceiveExecutor.class.getName());
 

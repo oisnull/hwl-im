@@ -1,6 +1,6 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
+import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
 import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.imom.OnlineManage;
 import com.hwl.im.server.redis.TokenStorage;
@@ -11,7 +11,7 @@ import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
 import java.util.UUID;
 
-public class UserValidateReceiveExecutor extends AbstractMessageReceivExecutor<ImUserValidateRequest> {
+public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<ImUserValidateRequest> {
 
     public UserValidateReceiveExecutor(ImUserValidateRequest request) {
         super(request);

@@ -1,12 +1,12 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
+import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
 import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.imcore.improto.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class TestConnectionMessageReceiveExecutor extends AbstractMessageReceivExecutor<ImTestConnectionMessageRequest> {
+public class TestConnectionMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImTestConnectionMessageRequest> {
     static Logger log = LogManager.getLogger(TestConnectionMessageReceiveExecutor.class.getName());
     public TestConnectionMessageReceiveExecutor(ImTestConnectionMessageRequest imTestConnectionMessageRequest) {
         super(imTestConnectionMessageRequest);

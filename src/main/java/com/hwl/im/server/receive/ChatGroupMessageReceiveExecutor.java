@@ -1,6 +1,6 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceivExecutor;
+import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
 import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.imom.OnlineManage;
 import com.hwl.im.core.imstore.OfflineMessageManage;
@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceivExecutor<ImChatGroupMessageRequest> {
+public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImChatGroupMessageRequest> {
 
     static Logger log = LogManager.getLogger(ChatGroupMessageReceiveExecutor.class.getName());
     ImChatGroupMessageContent groupMessageContent = null;
@@ -78,5 +78,10 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceivExecut
             }
         }
 
+    }
+
+    @Override
+    protected boolean isAck() {
+        return true;
     }
 }
