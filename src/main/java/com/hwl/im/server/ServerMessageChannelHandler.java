@@ -32,20 +32,19 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ImMessageContext msg) throws Exception {
+        log.debug("Server channel read : {}", msg.toString());
+        
         MessageReceiveExecutor receiveExecutor = MessageExecuteFactory.create(msg);
         if (receiveExecutor == null)
             return;
-        log.debug("Server channel read : {}", msg.toString());
 
         receiveExecutor.setChannel(ctx.channel());
         ImMessageContext response = receiveExecutor.execute();
-        if (response == null)
-            return;
 
         MessageOperate.send(ctx.channel(), response, new Consumer<Boolean>() {
             @Override
             public void accept(Boolean succ) {
-                log.debug("Server response {} :{}", succ, response.toString());
+                log.debug("Server response {} :{}", succ, response != null ? response.toString() : "");
             }
         });
     }
