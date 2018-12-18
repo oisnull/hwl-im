@@ -116,6 +116,43 @@ public class MessageOperate {
             });
         }
     }
+	
+	public static void removeSentMessage(long userid,String messageGuid){
+		SentMessageManage.getInstance().removeMessage(userid,messageGuid,new Runnable(){
+			@Override  
+			public void run() {
+				
+			}  
+		});
+	}
+	
+	public static void serverPush2(long userid,ImMessageContext messageContext){
+		if(SentMessageManage.getInstance().isSpilled(userid)){
+			OfflineMessageManage.getInstance().addMessage(userid, messageContext);
+			return;
+		}
+		
+        Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
+        if (toUserChannel == null){
+			// offline
+            OfflineMessageManage.getInstance().addMessage(userid, messageContext);
+			return;
+		}
+		
+		// online
+		send(toUserChannel, messageContext, new Consumer<Boolean>() {
+
+			@Override
+			public void accept(Boolean succ) {
+				if (succ) {
+					SentMessageManage.getInstance().addMessage(userid,messageContext);
+				} else {
+					// failed
+					OfflineMessageManage.getInstance().addMessage(userid, messageContext);
+				}
+			}
+		});
+	}
 
     public static void serverPush(Long userid) {
         Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);

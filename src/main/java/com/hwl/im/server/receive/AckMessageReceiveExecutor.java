@@ -23,6 +23,6 @@ public class AckMessageReceiveExecutor extends AbstractMessageReceiveExecutor<Im
 
     @Override
     public void executeCore(Builder response) {
-
+		MessageOperate.removeSentMessage(request.getUserId(),request.getMessageId());
     }
 }
