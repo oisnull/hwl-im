@@ -106,6 +106,9 @@ public class IMClientEntry {
                     } else if (commands[0].equals("send") && commands[1].equals("addfriend")) {
                         //send addfriend 2 woshi222
                         messageOperate.send(new AddFriendMessageSend(userId, "fromusername", "fromuserimage", Long.parseLong(commands[2]), commands[3]));
+                    } else if (commands[0].equals("send") && commands[1].equals("ack")) {
+                        //send ack messageid
+                        messageOperate.send(new ClientAckMessageSend(userId, "messageid"));
                     } else {
                         this.sendCommandDesc();
                     }
