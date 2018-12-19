@@ -45,8 +45,6 @@ public class ClientMessageChannelHandler extends SimpleChannelInboundHandler<ImM
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ImMessageContext msg) throws Exception {
-        if (msg == null)
-            return;
         // if (isDebug)
         // log.debug("Client read0 : {}", msg.toString());
         this.messageOperate.listen(msg);

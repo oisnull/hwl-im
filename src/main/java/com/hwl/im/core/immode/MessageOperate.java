@@ -1,5 +1,6 @@
 package com.hwl.im.core.immode;
 
+import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -8,6 +9,7 @@ import com.hwl.im.core.ThreadPoolUtil;
 import com.hwl.im.core.imaction.MessageSendExecutor;
 import com.hwl.im.core.imom.OnlineManage;
 import com.hwl.im.core.imqos.RetryMessageManage;
+import com.hwl.im.core.imqos.SentMessageManage;
 import com.hwl.im.core.imstore.OfflineMessageManage;
 import com.hwl.imcore.improto.ImMessageContext;
 
@@ -117,11 +119,16 @@ public class MessageOperate {
         }
     }
 	
+	public static void moveSentMessageIntoOffline(long userid){
+		LinkedList<ImMessageContext> messages=SentMessageManage.getInstance().getMessages(userid);
+		OfflineMessageManage.getInstance().addMessages(userid,messages);
+	}
+	
 	public static void removeSentMessage(long userid,String messageGuid){
 		SentMessageManage.getInstance().removeMessage(userid,messageGuid,new Runnable(){
 			@Override  
-			public void run() {
-				
+			public void run() {							
+				serverPush2(userid,OfflineMessageManage.getInstance().pollMessage(userid));
 			}  
 		});
 	}
@@ -146,6 +153,7 @@ public class MessageOperate {
 			public void accept(Boolean succ) {
 				if (succ) {
 					SentMessageManage.getInstance().addMessage(userid,messageContext);
+					serverPush2(userid,OfflineMessageManage.getInstance().pollMessage(userid));
 				} else {
 					// failed
 					OfflineMessageManage.getInstance().addMessage(userid, messageContext);

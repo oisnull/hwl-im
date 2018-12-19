@@ -38,6 +38,12 @@ public class SentMessageManage {
 			return messages.size();
 		}
 	}
+	
+	public LinkedList<ImMessageContext> getMessages(long userId){
+		if(userId<=0) return null;
+		
+        return sentMessageContainer.get(userId);
+	}
 
     public void addMessage(long userId, ImMessageContext messageContext) {
         if (userId <= 0 || messageContext == null) return;

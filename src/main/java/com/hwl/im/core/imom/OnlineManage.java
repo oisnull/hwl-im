@@ -14,10 +14,11 @@ public class OnlineManage {
     public final static AttributeKey<String> USER_SESSION_IDENTITY_ATTR = AttributeKey.valueOf(USER_SESSION_IDENTITY);
 
     private final static ConcurrentHashMap<String, Channel> onlineChannels = new ConcurrentHashMap<String, Channel>();
-    private static OnlineManage instance = null;
+    private static OnlineManage instance = new OnlineManage();
     private static Logger log = LogManager.getLogger(OnlineManage.class.getName());
     private static OnlineSessionStorageMedia sessionManager = new OnlineSessionMemoryManage();
-    private static boolean isDeugger = true;
+	
+    private boolean isDeugger = true;
 
     private OnlineManage() {
     }
@@ -63,14 +64,11 @@ public class OnlineManage {
     }
 
     public void removeChannel(Channel channel) {
-        synchronized (onlineChannels) {
-            String key = channel.attr(USER_SESSION_IDENTITY_ATTR).get();
-//            log.debug("Remove channel : key is {}", key);
-            if (key != null) {
-                sessionManager.removeSession(key);
-                onlineChannels.remove(key);
-            }
-        }
+		String key = channel.attr(USER_SESSION_IDENTITY_ATTR).get();
+		if (key != null) {
+			sessionManager.removeSession(key);
+			onlineChannels.remove(key);
+		}
 
         printLog();
     }
@@ -79,6 +77,11 @@ public class OnlineManage {
         if (userid <= 0)
             return null;
         return sessionManager.getSession(userid);
+    }
+
+    public long getUserId(Channel channel) {   
+        String key = channel.attr(USER_SESSION_IDENTITY_ATTR).get();     
+        return sessionManager.getUserId(key);
     }
 
     public boolean isOnline(Long userid) {

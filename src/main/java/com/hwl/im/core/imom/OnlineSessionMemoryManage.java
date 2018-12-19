@@ -20,6 +20,14 @@ public class OnlineSessionMemoryManage implements OnlineSessionStorageMedia {
         }
         return onlineSessions.get(userid);
     }
+	
+    @Override
+    public long getUserId(String sessionid){
+		if (sessionid == null || sessionid.trim().equals("")) {
+            return 0;
+        }
+        return ImCoreCommon.getKeyByValue(onlineSessions, sessionid);
+	}
 
     @Override
     public void setSession(Long userid, String sessionid) {

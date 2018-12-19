@@ -57,6 +57,7 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.debug("Server channel inactive: remote client {} disconnect ", ctx.channel().remoteAddress());
+		MessageOperate.moveSentMessageIntoOffline(OnlineManage.getInstance().getUserId(ctx.channel()));
         OnlineManage.getInstance().removeChannel(ctx.channel());
     }
 
