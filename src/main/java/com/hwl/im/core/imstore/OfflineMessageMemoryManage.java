@@ -12,7 +12,7 @@ public class OfflineMessageMemoryManage implements OfflineMessageStorageMedia {
 	private static Map<Long, LinkedList<ImMessageContext>> offlineMessageContainer = new HashMap<>();
 
 	@Override
-	public void addMessage(Long userid, ImMessageContext messageContext) {
+	public void addMessage(long userid, ImMessageContext messageContext) {
 		if (userid <= 0 || messageContext == null)
 			return;
 		if (offlineMessageContainer.containsKey(userid)) {
@@ -25,7 +25,18 @@ public class OfflineMessageMemoryManage implements OfflineMessageStorageMedia {
 	}
 
 	@Override
-	public List<ImMessageContext> getMessages(Long userid) {
+	public void addMessages(long userid, LinkedList<ImMessageContext> messageContexts) {
+		if (userid <= 0 || messageContexts == null||messageContexts.size()<=0)
+			return;
+		if (offlineMessageContainer.containsKey(userid)) {
+			offlineMessageContainer.get(userid).addAll(messageContexts);
+		} else {
+			offlineMessageContainer.put(userid, messageContexts);
+		}
+	}	
+
+	@Override
+	public List<ImMessageContext> getMessages(long userid) {
 		if (userid <= 0)
 			return null;
 
@@ -33,7 +44,7 @@ public class OfflineMessageMemoryManage implements OfflineMessageStorageMedia {
 	}
 
 	@Override
-	public ImMessageContext pollMessage(Long userid) {
+	public ImMessageContext pollMessage(long userid) {
 		if (userid <= 0)
 			return null;
 

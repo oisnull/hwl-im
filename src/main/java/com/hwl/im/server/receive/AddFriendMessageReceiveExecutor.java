@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class AddFriendMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImAddFriendMessageRequest> {
-    
+
     static Logger log = LogManager.getLogger(AddFriendMessageReceiveExecutor.class.getName());
 
     public AddFriendMessageReceiveExecutor(ImAddFriendMessageRequest imAddFriendMessageRequest) {
@@ -47,12 +47,18 @@ public class AddFriendMessageReceiveExecutor extends AbstractMessageReceiveExecu
         ImMessageContext messageContext = super.getMessageContext(response);
 
         Long userid = request.getAddFriendMessageContent().getToUserId();
-        MessageOperate.serverSendAndRetry(userid, messageContext, (succ) -> {
-            if (succ) {
-                log.debug("Server push add friend message success : {}", messageContext.toString());
-            } else {
-                log.error("Server push add friend message failed : {}", messageContext.toString());
-            }
-        });
+        MessageOperate.serverPushOffline(userid, messageContext);
+//        MessageOperate.serverSendAndRetry(userid, messageContext, (succ) -> {
+//            if (succ) {
+//                log.debug("Server push add friend message success : {}", messageContext.toString());
+//            } else {
+//                log.error("Server push add friend message failed : {}", messageContext.toString());
+//            }
+//        });
+    }
+
+    @Override
+    protected boolean isAck() {
+        return true;
     }
 }

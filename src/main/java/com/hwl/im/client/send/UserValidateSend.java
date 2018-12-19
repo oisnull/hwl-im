@@ -45,4 +45,5 @@ public class UserValidateSend extends AbstractMessageSendExecutor {
     public Consumer<Boolean> sendStatusCallback() {
         return this.sendCallback;
     }
+
 }

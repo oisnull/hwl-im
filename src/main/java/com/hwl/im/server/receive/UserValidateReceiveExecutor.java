@@ -63,7 +63,7 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<
                 ImUserValidateResponse.newBuilder().setIsSuccess(true).setIsOnline(false).setSessionid(sessionid).build());
 
         // start offline message push process
-        MessageOperate.serverPush(request.getUserId());
+        MessageOperate.serverPushOffline(request.getUserId(), request.getMessageid());
     }
 
     private boolean checkUserInfo() {

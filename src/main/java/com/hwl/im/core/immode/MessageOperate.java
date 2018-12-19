@@ -1,5 +1,6 @@
 package com.hwl.im.core.immode;
 
+import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -8,6 +9,7 @@ import com.hwl.im.core.ThreadPoolUtil;
 import com.hwl.im.core.imaction.MessageSendExecutor;
 import com.hwl.im.core.imom.OnlineManage;
 import com.hwl.im.core.imqos.RetryMessageManage;
+import com.hwl.im.core.imqos.SentMessageManage;
 import com.hwl.im.core.imstore.OfflineMessageManage;
 import com.hwl.imcore.improto.ImMessageContext;
 
@@ -78,80 +80,160 @@ public class MessageOperate {
         });
     }
 
-    public static void serverSendAndRetry(Long userid, ImMessageContext messageContext,
-                                          Consumer<Boolean> callback) {
-        Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
-        if (toUserChannel == null) {
-            // offline
-            OfflineMessageManage.getInstance().addMessage(userid, messageContext);
-            if (callback != null) {
-                callback.accept(false);
-            }
-        } else {
-            // online
-            send(toUserChannel, messageContext, callback);
-        }
+//    public static void serverSendAndRetry(Long userid, ImMessageContext messageContext,
+//                                          Consumer<Boolean> callback) {
+//        Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
+//        if (toUserChannel == null) {
+//            // offline
+//            OfflineMessageManage.getInstance().addMessage(userid, messageContext);
+//            if (callback != null) {
+//                callback.accept(false);
+//            }
+//        } else {
+//            // online
+//            send(toUserChannel, messageContext, callback);
+//        }
+//    }
+//
+//    public static void serverSendAndRetry(Long userid, ImMessageContext messageContext, Runnable succCallback) {
+//        Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
+//        if (toUserChannel == null) {
+//            // offline
+//            OfflineMessageManage.getInstance().addMessage(userid, messageContext);
+//        } else {
+//            // online
+//            send(toUserChannel, messageContext, new Consumer<Boolean>() {
+//
+//                @Override
+//                public void accept(Boolean succ) {
+//                    if (succ) {
+//                        if (succCallback != null) {
+//                            succCallback.run();
+//                        }
+//                    } else {
+//                        // failed
+//                        RetryMessageManage.getInstance().addMessage(userid, messageContext, false);
+//                    }
+//                }
+//            });
+//        }
+//    }
+
+    public static void moveSentMessageIntoOffline(long userid) {
+        LinkedList<ImMessageContext> messages = SentMessageManage.getInstance().getMessages(userid);
+        OfflineMessageManage.getInstance().addMessages(userid, messages);
     }
 
-    public static void serverSendAndRetry(Long userid, ImMessageContext messageContext, Runnable succCallback) {
-        Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
-        if (toUserChannel == null) {
-            // offline
-            OfflineMessageManage.getInstance().addMessage(userid, messageContext);
-        } else {
-            // online
-            send(toUserChannel, messageContext, new Consumer<Boolean>() {
-
-                @Override
-                public void accept(Boolean succ) {
-                    if (succ) {
-                        if (succCallback != null) {
-                            succCallback.run();
-                        }
-                    } else {
-                        // failed
-                        RetryMessageManage.getInstance().addMessage(userid, messageContext, false);
-                    }
-                }
-            });
-        }
+    public static void removeSentMessage(long userid, String messageGuid) {
+        SentMessageManage.getInstance().removeMessage(userid, messageGuid);
     }
 
-    public static void serverPush(Long userid) {
-        Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
-        if (toUserChannel == null)
-            return;
-
+    public static void serverPushOffline(long userid, String messageGuid) {
         executorService.execute(new Runnable() {
-
             @Override
             public void run() {
-                log.debug("Server push offline message run , current thread {}", Thread.currentThread().getName());
-                serverPushOfflineMessage(userid, toUserChannel);
+                SentMessageManage.getInstance().removeMessage(userid, messageGuid, new Runnable() {
+                    @Override
+                    public void run() {
+                        serverPushOffline(userid, OfflineMessageManage.getInstance().pollMessage(userid));
+                    }
+                });
             }
         });
     }
 
-    private static void serverPushOfflineMessage(Long userid, Channel channel) {
+    public static void serverPushOffline(long userid, ImMessageContext messageContext) {
+        if (userid <= 0 || messageContext == null) return;
 
-        ImMessageContext messageContext = OfflineMessageManage.getInstance().pollMessage(userid);
-        if (messageContext == null)
+        Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
+        if (toUserChannel == null) {
+            // offline
+            OfflineMessageManage.getInstance().addMessage(userid, messageContext);
             return;
+        }
 
-        send(channel, messageContext, new Consumer<Boolean>() {
+        if (SentMessageManage.getInstance().isSpilled(userid)) {
+            OfflineMessageManage.getInstance().addMessage(userid, messageContext);
+            return;
+        }
+
+        // online
+        send(toUserChannel, messageContext, new Consumer<Boolean>() {
 
             @Override
             public void accept(Boolean succ) {
                 if (succ) {
-                    log.debug("Sever push offline message success : {}", messageContext.toString());
+                    SentMessageManage.getInstance().addMessage(userid, messageContext);
+                    serverPushOffline(userid, OfflineMessageManage.getInstance().pollMessage(userid));
                 } else {
-                    log.debug("Sever push offline message failed : {}", messageContext.toString());
                     // failed
-                    RetryMessageManage.getInstance().addMessage(userid, messageContext, true);
+                    OfflineMessageManage.getInstance().addMessage(userid, messageContext);
                 }
-                serverPushOfflineMessage(userid, channel);
             }
         });
     }
+
+    public static void serverPushTimely(Long userid, ImMessageContext messageContext, Consumer<Boolean> callback) {
+        if (userid <= 0 || messageContext == null) return;
+
+        Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
+        if (toUserChannel == null || SentMessageManage.getInstance().isSpilled(userid)) {
+            // add offline message
+            OfflineMessageManage.getInstance().addMessage(userid, messageContext);
+            return;
+        }
+
+        send(toUserChannel, messageContext, new Consumer<Boolean>() {
+            @Override
+            public void accept(Boolean succ) {
+                if (callback != null) {
+                    callback.accept(succ);
+                }
+                if (succ) {
+                    SentMessageManage.getInstance().addMessage(userid, messageContext);
+                }else{
+                    // failed
+                    OfflineMessageManage.getInstance().addMessage(userid, messageContext);
+                }
+            }
+        });
+    }
+
+//    public static void serverPush(Long userid) {
+//        Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
+//        if (toUserChannel == null)
+//            return;
+//
+//        executorService.execute(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                log.debug("Server push offline message run , current thread {}", Thread.currentThread().getName());
+//                serverPushOfflineMessage(userid, toUserChannel);
+//            }
+//        });
+//    }
+
+//    private static void serverPushOfflineMessage(Long userid, Channel channel) {
+//
+//        ImMessageContext messageContext = OfflineMessageManage.getInstance().pollMessage(userid);
+//        if (messageContext == null)
+//            return;
+//
+//        send(channel, messageContext, new Consumer<Boolean>() {
+//
+//            @Override
+//            public void accept(Boolean succ) {
+//                if (succ) {
+//                    log.debug("Sever push offline message success : {}", messageContext.toString());
+//                } else {
+//                    log.debug("Sever push offline message failed : {}", messageContext.toString());
+//                    // failed
+//                    RetryMessageManage.getInstance().addMessage(userid, messageContext, true);
+//                }
+//                serverPushOfflineMessage(userid, channel);
+//            }
+//        });
+//    }
 
 }

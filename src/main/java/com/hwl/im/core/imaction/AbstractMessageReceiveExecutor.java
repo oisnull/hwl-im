@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 
 import io.netty.channel.Channel;
 
+import java.util.UUID;
+
 public abstract class AbstractMessageReceiveExecutor<TRequest> implements MessageReceiveExecutor {
     private static Logger log = LogManager.getLogger(AbstractMessageReceiveExecutor.class.getName());
 
@@ -49,8 +51,10 @@ public abstract class AbstractMessageReceiveExecutor<TRequest> implements Messag
     @Override
     public final ImMessageContext execute() {
         ImMessageResponseHead.Builder responseHead = ImMessageResponseHead.newBuilder();
-        responseHead.setCode(ImMessageResponseCode.Success_VALUE).setMessage("");
-        responseHead.setIsAck(isAck());
+        responseHead.setCode(ImMessageResponseCode.Success_VALUE)
+					.setMessage("")
+					.setIsack(isAck())
+					.setMessageid(getMessageId());
 
         ImMessageResponse.Builder msgResponse = ImMessageResponse.newBuilder().setResponseHead(responseHead);
 
@@ -71,6 +75,10 @@ public abstract class AbstractMessageReceiveExecutor<TRequest> implements Messag
 
         return this.getMessageContext(msgResponse);
     }
+	
+	private String getMessageId(){
+		return UUID.randomUUID().toString().replace("-", "");
+	}
 
     protected ImMessageContext getMessageContext(ImMessageResponse.Builder response) {
         return ImMessageContext.newBuilder().setResponse(response).setType(getMessageType()).build();

@@ -20,6 +20,14 @@ public class SessionStorage implements OnlineSessionStorageMedia {
     }
 
     @Override
+    public long getUserId(String sessionid) {
+        if (sessionid == null || sessionid.isEmpty())
+            return 0;
+
+        return RedisUtil.exec(RedisUtil.USER_SESSION_DB, client -> Long.parseLong(client.get(sessionid)));
+    }
+
+    @Override
     public void setSession(Long userid, String sessionid) {
         if (userid <= 0)
             return;

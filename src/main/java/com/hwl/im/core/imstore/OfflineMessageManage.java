@@ -1,5 +1,6 @@
 package com.hwl.im.core.imstore;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,18 +37,22 @@ public class OfflineMessageManage {
         }
     }
 
-    public void addMessage(Long userid, ImMessageContext messageContext) {
+    public void addMessage(long userid, ImMessageContext messageContext) {
         if (userid <= 0 || messageContext == null) {
             return;
         }
         messageManager.addMessage(userid, messageContext);
     }
 
-    public List<ImMessageContext> getMessages(Long userid) {
+    public void addMessages(long userid, LinkedList<ImMessageContext> messageContexts) {
+        messageManager.addMessages(userid, messageContexts);
+    }
+
+    public List<ImMessageContext> getMessages(long userid) {
         return messageManager.getMessages(userid);
     }
 
-    public ImMessageContext pollMessage(Long userid) {
+    public ImMessageContext pollMessage(long userid) {
         return messageManager.pollMessage(userid);
     }
 }

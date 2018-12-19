@@ -1,10 +1,12 @@
 package com.hwl.im.client;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import com.hwl.im.core.imaction.MessageListenExecutor;
 import com.hwl.im.core.imaction.MessageSendExecutor;
 import com.hwl.im.core.immode.MessageOperate;
+import com.hwl.im.core.immode.MessageResponseHeadOperate;
 import com.hwl.imcore.improto.ImMessageContext;
 import com.hwl.imcore.improto.ImMessageType;
 
@@ -21,6 +23,11 @@ public final class ClientMessageOperate {
     private Channel serverChannel = null;
     private ConcurrentHashMap<ImMessageType, MessageListenExecutor> listenExecutors = new ConcurrentHashMap<>();
     private Runnable disconnectCallback = null;
+    private Consumer<String> clientAckCallback = null;
+
+    public void setClientAckCallback(Consumer<String> clientAckCallback) {
+        this.clientAckCallback = clientAckCallback;
+    }
 
     public void registerChannel(Channel channel) {
         this.serverChannel = channel;
@@ -61,10 +68,19 @@ public final class ClientMessageOperate {
         this.send(sendExecutor);
     }
 
+    private void sendAckMessage(ImMessageContext messageContext) {
+        if (this.clientAckCallback != null && MessageResponseHeadOperate.isAck(messageContext)) {
+            this.clientAckCallback.accept(MessageResponseHeadOperate.getMessageId(messageContext));
+        }
+    }
+
     public void listen(ImMessageContext messageContext) {
         check();
         if (messageContext == null)
             return;
+
+        this.sendAckMessage(messageContext);
+
         MessageListenExecutor listenExecutor = listenExecutors.get(messageContext.getType());
         if (listenExecutor == null)
             return;
@@ -81,39 +97,4 @@ public final class ClientMessageOperate {
         }
         unregisterChannel();
     }
-
-    // public void send(MessageSendExecutor sendExecutor, MessageListenExecutor
-    // listenExecutor) {
-    // check();
-    // if (sendExecutor == null)
-    // return;
-    // ChannelFuture channelFuture =
-    // this.serverChannel.writeAndFlush(sendExecutor.getMessageContext());
-    // channelFuture.addListener(new ChannelFutureListener() {
-
-    // @Override
-    // public void operationComplete(ChannelFuture future) throws Exception {
-    // if (sendExecutor.isSendFailedAndClose() && !future.isSuccess()) {
-    // serverChannel.close();
-    // unregisterChannel();
-    // }
-    // sendExecutor.sendResultCallback(future.isSuccess());
-    // }
-    // });
-    // }
-
-    // public void read(ImMessageContext messageContext) {
-    // if (messageContext == null || this.listenExecutors.size() <= 0)
-    // return;
-
-    // MessageListenExecutor executor =
-    // this.listenExecutors.get(messageContext.getType());
-    // if (executor == null)
-    // return;
-    // executor.execute(messageContext);
-    // if (executor.executedAndClose() && this.serverChannel != null) {
-    // this.serverChannel.close();
-    // unregisterChannel();
-    // }
-    // }
 }

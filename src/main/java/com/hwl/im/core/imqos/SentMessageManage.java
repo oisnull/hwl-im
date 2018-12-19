@@ -12,7 +12,7 @@ public class SentMessageManage {
     private final static ConcurrentHashMap<Long, LinkedList<ImMessageContext>> sentMessageContainer = new ConcurrentHashMap<>();
     private static SentMessageManage instance = new SentMessageManage();
 
-    private MessageOperateListener operateListener;
+    // private MessageOperateListener operateListener;
 
     public static SentMessageManage getInstance() {
         //if (instance == null)
@@ -21,8 +21,28 @@ public class SentMessageManage {
         return instance;
     }
 
-    public void setMessageOperateListener(MessageOperateListener operateListener) {
-        this.operateListener = operateListener;
+    // public void setMessageOperateListener(MessageOperateListener operateListener) {
+    // this.operateListener = operateListener;
+    // }
+
+    public boolean isSpilled(long userId) {
+        return getMessageCount(userId) >= MAX_MESSAGE_COUNT;
+    }
+
+    public int getMessageCount(long userId) {
+        if (userId <= 0) return MAX_MESSAGE_COUNT;
+        LinkedList<ImMessageContext> messages = sentMessageContainer.get(userId);
+        if (messages == null) {
+            return 0;
+        } else {
+            return messages.size();
+        }
+    }
+
+    public LinkedList<ImMessageContext> getMessages(long userId) {
+        if (userId <= 0) return null;
+
+        return sentMessageContainer.get(userId);
     }
 
     public void addMessage(long userId, ImMessageContext messageContext) {
@@ -34,32 +54,44 @@ public class SentMessageManage {
             messages.add(messageContext);
             sentMessageContainer.put(userId, messages);
         } else {
-            if (messages.size() >= MAX_MESSAGE_COUNT) {
-                this.operateListener.onMessageMaximized(userId, messageContext);
-            } else {
-                //lock list
-                messages.add(messageContext);
-            }
+            //lock list
+            messages.add(messageContext);
+            // if (messages.size() >= MAX_MESSAGE_COUNT) {
+            // this.operateListener.onMessageMaximized(userId, messageContext);
+            // } else {
+            // //lock list
+            // messages.add(messageContext);
+            // }
         }
     }
 
     public void removeMessage(long userId, String messageGuid) {
-        if (userId <= 0 || messageGuid == null || messageGuid == "") return;
+        this.removeMessage(userId, messageGuid, null);
+    }
+
+    public void removeMessage(long userId, String messageGuid, Runnable emptyCallback) {
+        if (userId <= 0 || messageGuid == null || messageGuid == "") {
+            if (emptyCallback != null) emptyCallback.run();
+            return;
+        }
 
         LinkedList<ImMessageContext> messages = sentMessageContainer.get(userId);
         if (messages == null || messages.size() <= 0) return;
 
         for (int i = 0; i < messages.size(); i++) {
-            if (messageGuid.equals(messages.get(i).getRequest().getRequestHead().getMessageid())) {
+            if (messageGuid.equals(messages.get(i).getResponse().getResponseHead().getMessageid())) {
                 messages.remove(i);
-                return;
+                break;
             }
+        }
+        if (messages.size() <= 0 && emptyCallback != null) {
+            emptyCallback.run();
         }
     }
 
-    public interface MessageOperateListener {
-        void onMessageMaximized(long userId, ImMessageContext messageContext);
+    // public interface MessageOperateListener {
+    // void onMessageMaximized(long userId, ImMessageContext messageContext);
 
-        void onLastMessageSent(long userId);
-    }
+    // void onLastMessageSent(long userId);
+    // }
 }

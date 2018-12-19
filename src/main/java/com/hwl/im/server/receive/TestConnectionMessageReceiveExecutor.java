@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 public class TestConnectionMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImTestConnectionMessageRequest> {
     static Logger log = LogManager.getLogger(TestConnectionMessageReceiveExecutor.class.getName());
+
     public TestConnectionMessageReceiveExecutor(ImTestConnectionMessageRequest imTestConnectionMessageRequest) {
         super(imTestConnectionMessageRequest);
     }
@@ -20,7 +21,7 @@ public class TestConnectionMessageReceiveExecutor extends AbstractMessageReceive
                 .build());
         ImMessageContext messageContext = super.getMessageContext(response);
 
-        MessageOperate.serverSendAndRetry(request.getFromUserId(), messageContext, (succ) -> {
+        MessageOperate.serverPushTimely(request.getFromUserId(), messageContext, (succ) -> {
             if (succ) {
                 log.debug("Server push test connection message success : {}", messageContext.toString());
             } else {

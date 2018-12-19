@@ -45,7 +45,7 @@ public class ChatUserMessageReceiveExecutor extends AbstractMessageReceiveExecut
         // if online and sent info
         // else store the message into memory
         Long userid = request.getChatUserMessageContent().getToUserId();
-        MessageOperate.serverSendAndRetry(userid, messageContext, (succ) -> {
+        MessageOperate.serverPushTimely(userid, messageContext, (succ) -> {
             if (succ) {
                 log.debug("Server push chat user({}) message success : {}", userid, messageContext.toString());
             } else {

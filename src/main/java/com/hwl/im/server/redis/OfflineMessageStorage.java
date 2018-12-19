@@ -1,5 +1,6 @@
 package com.hwl.im.server.redis;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.hwl.im.core.imstore.OfflineMessageStorageMedia;
@@ -17,7 +18,7 @@ public class OfflineMessageStorage implements OfflineMessageStorageMedia {
     }
 
     @Override
-    public void addMessage(Long userid, ImMessageContext messageContext) {
+    public void addMessage(long userid, ImMessageContext messageContext) {
         if (userid <= 0 || messageContext == null)
             return;
 
@@ -28,12 +29,17 @@ public class OfflineMessageStorage implements OfflineMessageStorageMedia {
     }
 
     @Override
-    public List<ImMessageContext> getMessages(Long userid) {
+    public void addMessages(long userid, LinkedList<ImMessageContext> messageContexts) {
+
+    }
+
+    @Override
+    public List<ImMessageContext> getMessages(long userid) {
         return null;
     }
 
     @Override
-    public ImMessageContext pollMessage(Long userid) {
+    public ImMessageContext pollMessage(long userid) {
         if (userid <= 0)
             return null;
 

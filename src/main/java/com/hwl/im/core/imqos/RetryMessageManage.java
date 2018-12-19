@@ -52,20 +52,20 @@ public class RetryMessageManage {
             return;
         }
 
-        MessageOperate.serverSendAndRetry(retryMessageModel.userid, retryMessageModel.messageContext, new Consumer<Boolean>() {
-
-            @Override
-            public void accept(Boolean succ) {
-                if (succ == false) {
-                    retryMessageModel.retryCount++;
-                    retryMessageModel.currentTimeMills = System.currentTimeMillis();
-                    messageContainer.add(retryMessageModel);
-                }
-
-                isRuning = false;
-                exec();
-            }
-        });
+//        MessageOperate.serverSendAndRetry(retryMessageModel.userid, retryMessageModel.messageContext, new Consumer<Boolean>() {
+//
+//            @Override
+//            public void accept(Boolean succ) {
+//                if (succ == false) {
+//                    retryMessageModel.retryCount++;
+//                    retryMessageModel.currentTimeMills = System.currentTimeMillis();
+//                    messageContainer.add(retryMessageModel);
+//                }
+//
+//                isRuning = false;
+//                exec();
+//            }
+//        });
     }
 
     public void startup() {

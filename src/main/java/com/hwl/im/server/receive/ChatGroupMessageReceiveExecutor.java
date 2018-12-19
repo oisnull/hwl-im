@@ -65,7 +65,7 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceiveExecu
         for (Long userid : userIds) {
             if (OnlineManage.getInstance().isOnline(userid)) {
                 // online
-                MessageOperate.serverSendAndRetry(userid, messageContext, (succ) -> {
+                MessageOperate.serverPushTimely(userid, messageContext, (succ) -> {
                     if (succ) {
                         log.debug("Server push chat group message success : {}", messageContext.toString());
                     } else {
