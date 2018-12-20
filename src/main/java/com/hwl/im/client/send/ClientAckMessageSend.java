@@ -32,6 +32,7 @@ public class ClientAckMessageSend extends AbstractMessageSendExecutor {
                 .setFromUserId(fromUserId)
                 .setMessageid(messageid)
                 .build());
+        log.debug("Client send ack message ,userid({}) messageid({})", fromUserId, messageid);
     }
 
     @Override

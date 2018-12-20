@@ -3,6 +3,7 @@ package com.hwl.im.core.imqos;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.hwl.im.core.immode.MessageResponseHeadOperate;
 import com.hwl.imcore.improto.ImMessageContext;
 
 public class SentMessageManage {
@@ -12,18 +13,12 @@ public class SentMessageManage {
     private final static ConcurrentHashMap<Long, LinkedList<ImMessageContext>> sentMessageContainer = new ConcurrentHashMap<>();
     private static SentMessageManage instance = new SentMessageManage();
 
-    // private MessageOperateListener operateListener;
-
     public static SentMessageManage getInstance() {
         //if (instance == null)
         //    instance = new SentMessageManage();
 
         return instance;
     }
-
-    // public void setMessageOperateListener(MessageOperateListener operateListener) {
-    // this.operateListener = operateListener;
-    // }
 
     public boolean isSpilled(long userId) {
         return getMessageCount(userId) >= MAX_MESSAGE_COUNT;
@@ -39,16 +34,16 @@ public class SentMessageManage {
         }
     }
 
-	public ImMessageContext pollMessage(long userId){
-		if (userId <= 0)
-			return null;
-
-		LinkedList<ImMessageContext> messages = sentMessageContainer.get(userId);
-		if (messages == null || messages.size() <= 0)
-			return null;
-
-		return messages.poll();
-	}
+//    public ImMessageContext pollMessage(long userId) {
+//        if (userId <= 0)
+//            return null;
+//
+//        LinkedList<ImMessageContext> messages = sentMessageContainer.get(userId);
+//        if (messages == null || messages.size() <= 0)
+//            return null;
+//
+//        return messages.poll();
+//    }
 
     public LinkedList<ImMessageContext> getMessages(long userId) {
         if (userId <= 0) return null;
@@ -58,6 +53,9 @@ public class SentMessageManage {
 
     public void addMessage(long userId, ImMessageContext messageContext) {
         if (userId <= 0 || messageContext == null) return;
+        if (!MessageResponseHeadOperate.isAck(messageContext)) return;
+        String messageid = MessageResponseHeadOperate.getMessageId(messageContext);
+        if (messageid == null || messageid == "") return;
 
         LinkedList<ImMessageContext> messages = sentMessageContainer.get(userId);
         if (messages == null) {
@@ -66,15 +64,9 @@ public class SentMessageManage {
             sentMessageContainer.put(userId, messages);
         } else {
             //lock list
-			synchronized(messages){
-				messages.add(messageContext);
-			}
-            // if (messages.size() >= MAX_MESSAGE_COUNT) {
-            // this.operateListener.onMessageMaximized(userId, messageContext);
-            // } else {
-            // //lock list
-            // messages.add(messageContext);
-            // }
+            synchronized (messages) {
+                messages.add(messageContext);
+            }
         }
     }
 
@@ -91,20 +83,16 @@ public class SentMessageManage {
         LinkedList<ImMessageContext> messages = sentMessageContainer.get(userId);
         if (messages == null || messages.size() <= 0) return;
 
-        for (int i = 0; i < messages.size(); i++) {
-            if (messageGuid.equals(messages.get(i).getResponse().getResponseHead().getMessageid())) {
-                messages.remove(i);
-                break;
+        synchronized (messages) {
+            for (int i = 0; i < messages.size(); i++) {
+                if (messageGuid.equals(messages.get(i).getResponse().getResponseHead().getMessageid())) {
+                    messages.remove(i);
+                    break;
+                }
             }
         }
         if (messages.size() <= 0 && emptyCallback != null) {
             emptyCallback.run();
         }
     }
-
-    // public interface MessageOperateListener {
-    // void onMessageMaximized(long userId, ImMessageContext messageContext);
-
-    // void onLastMessageSent(long userId);
-    // }
 }

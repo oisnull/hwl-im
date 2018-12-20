@@ -18,7 +18,7 @@ public class OfflineMessageManage {
     final static ConcurrentHashMap<Long, Queue<ImMessageContext>> offlineMessages = new ConcurrentHashMap<>();
     static Logger log = LogManager.getLogger(OfflineMessageManage.class.getName());
 
-    private static OfflineMessageManage instance = null;
+    private static OfflineMessageManage instance = new OfflineMessageManage();
     private static OfflineMessageStorageMedia messageManager = new OfflineMessageMemoryManage();
 
     private OfflineMessageManage() {
