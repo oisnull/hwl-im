@@ -43,11 +43,11 @@ public class SentMessageManage {
 		if (userId <= 0)
 			return null;
 
-		LinkedList<ImMessageContext> messages = sentMessageContainer.get(userid);
-		if (messageContexts == null || messageContexts.size() <= 0)
+		LinkedList<ImMessageContext> messages = sentMessageContainer.get(userId);
+		if (messages == null || messages.size() <= 0)
 			return null;
 
-		return messageContexts.poll();
+		return messages.poll();
 	}
 
     public LinkedList<ImMessageContext> getMessages(long userId) {
