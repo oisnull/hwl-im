@@ -38,6 +38,7 @@ public class ServerPushMonitorManage {
             model.setStatus(MonitorModel.STAUTS_RUNNING);
             model.setStartExecTime(new Date());
             model.setEndExecTime(null);
+            model.setMessageCount(0);
             statusContainer.put(userId, model);
         }
     }
