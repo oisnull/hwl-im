@@ -8,8 +8,9 @@ import java.util.function.Consumer;
 import com.hwl.im.core.ThreadPoolUtil;
 import com.hwl.im.core.imaction.MessageSendExecutor;
 import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.core.imqos.RetryMessageManage;
 import com.hwl.im.core.imqos.SentMessageManage;
+import com.hwl.im.core.imsm.MonitorModel;
+import com.hwl.im.core.imsm.ServerPushMonitorManage;
 import com.hwl.im.core.imstore.OfflineMessageManage;
 import com.hwl.imcore.improto.ImMessageContext;
 
@@ -121,63 +122,76 @@ public class MessageOperate {
 
     public static void moveSentMessageIntoOffline(long userid) {
         LinkedList<ImMessageContext> messages = SentMessageManage.getInstance().getMessages(userid);
-		synchronized(messages){
-			OfflineMessageManage.getInstance().addMessages(userid, messages);
-			messages.clear();
-		}
+        if (messages == null) return;
+        synchronized (messages) {
+            OfflineMessageManage.getInstance().addMessages(userid, messages);
+            messages.clear();
+        }
     }
 
     public static void removeSentMessage(long userid, String messageGuid) {
         SentMessageManage.getInstance().removeMessage(userid, messageGuid);
+        startExecutePush(userid);
+    }
+
+    private static void startExecutePush(long userid) {
+        if (!ServerPushMonitorManage.getInstance().isRunning(userid)) {
+            ServerPushMonitorManage.getInstance().start(userid);
+            executorService.execute(() -> {
+                serverPushOffline(userid, OfflineMessageManage.getInstance().pollMessage(userid));
+            });
+        }
     }
 
     /**
-    *  ¿Í»§¶ËÍøÂç¶Ï¿ª£¬·şÎñÆ÷Ã»ÓĞ²¶×½µ½£¬´ËÊ±·şÎñÆ÷ÈÏÎª¿ÉÒÔÁ¬½Óµ½¿Í»§¶Ë
-    *  ·şÎñÆ÷¶ËÈÔÈ»¿ÉÒÔ³É¹¦µÄÍÆËÍÊı¾İµ½¿Í»§¶Ë£¬Õâ¶ÎÊ±¼äÍÆËÍµÄÊı¾İ¶¼»á´¢´æÔÚSentMessageManageÖĞµÄQueueÖĞ
-    *  µ±¿Í»§¶ËÃ»ÓĞÖØĞÂÁ¬½ÓÖ±µ½·şÎñÆ÷¼ì²âµ½£¬ÕâÊ±ĞèÒª½«SentMessageManageÖĞQueueµÄÊı¾İ×ªÒÆµ½OfflineÀëÏß´æ´¢¿âÖĞ
-    *  µ±¿Í»§¶ËÖØĞÂÁ¬½Ó²¢ÑéÖ¤³É¹¦ºó£¬¼ì²âµ½SentMessageManageÖĞµÄQueueÓĞÊı¾İ£¬ÕâÊ±ĞèÒª½«SentMessageManageÖĞQueueµÄÊı¾İ×ªÒÆµ½OfflineÀëÏß´æ´¢¿âÖĞ£¬²¢ÇÒ¿ªÆôÀëÏßÏûÏ¢ÍÆËÍÏß³Ì
-    */
+     * å®¢æˆ·ç«¯ç½‘ç»œæ–­å¼€ï¼ŒæœåŠ¡å™¨æ²¡æœ‰æ•æ‰åˆ°ï¼Œæ­¤æ—¶æœåŠ¡å™¨è®¤ä¸ºå¯ä»¥è¿æ¥åˆ°å®¢æˆ·ç«¯
+     * æœåŠ¡å™¨ç«¯ä»ç„¶å¯ä»¥æˆåŠŸçš„æ¨é€æ•°æ®åˆ°å®¢æˆ·ç«¯ï¼Œè¿™æ®µæ—¶é—´æ¨é€çš„æ•°æ®éƒ½ä¼šå‚¨å­˜åœ¨SentMessageManageä¸­çš„Queueä¸­
+     * å½“å®¢æˆ·ç«¯æ²¡æœ‰é‡æ–°è¿æ¥ç›´åˆ°æœåŠ¡å™¨æ£€æµ‹åˆ°ï¼Œè¿™æ—¶éœ€è¦å°†SentMessageManageä¸­Queueçš„æ•°æ®è½¬ç§»åˆ°Offlineç¦»çº¿å­˜å‚¨åº“ä¸­
+     * å½“å®¢æˆ·ç«¯é‡æ–°è¿æ¥å¹¶éªŒè¯æˆåŠŸåï¼Œæ£€æµ‹åˆ°SentMessageManageä¸­çš„Queueæœ‰æ•°æ®ï¼Œ
+     * è¿™æ—¶éœ€è¦å°†SentMessageManageä¸­Queueçš„æ•°æ®è½¬ç§»åˆ°Offlineç¦»çº¿å­˜å‚¨åº“ä¸­ï¼Œå¹¶ä¸”å¼€å¯ç¦»çº¿æ¶ˆæ¯æ¨é€çº¿ç¨‹
+     */
     public static void serverPushOffline(long userid, String messageGuid) {
-		removeSentMessage(userid,messageGuid);
-		moveSentMessageIntoOffline(userid);
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                serverPushOffline(userid, OfflineMessageManage.getInstance().pollMessage(userid));
-            }
-        });
+        SentMessageManage.getInstance().removeMessage(userid, messageGuid);
+        moveSentMessageIntoOffline(userid);
+        startExecutePush(userid);
     }
 
     public static void serverPushOffline(long userid, ImMessageContext messageContext) {
-        if (userid <= 0 || messageContext == null) return;
+        if (userid <= 0 || messageContext == null) {
+            ServerPushMonitorManage.getInstance().end(userid);
+            MonitorModel model = ServerPushMonitorManage.getInstance().getModel(userid);
+            log.debug("Server push offline message complete : userid({}) from {} to {} , count({}) , status({})",
+                    userid, model.getStartExecTime(), model.getEndExecTime(), model.getMessageCount(), model.getStatus());
+            return;
+        }
 
         Channel toUserChannel = OnlineManage.getInstance().getChannel(userid);
         if (toUserChannel == null) {
             // offline
-            log.debug("Server push offline message operate : user is offline , userid({}) message({})",userid, messageContext.toString());
+            log.debug("Server push offline message operate : user is offline , userid({}) message({})", userid, messageContext.toString());
+            ServerPushMonitorManage.getInstance().endError(userid);
             OfflineMessageManage.getInstance().addMessage(userid, messageContext);
             return;
         }
 
         if (SentMessageManage.getInstance().isSpilled(userid)) {
-            log.debug("Server push offline message operate : sent message queue is spilled , userid({}) message({})",userid, messageContext.toString());
+            log.debug("Server push offline message operate : sent message queue is spilled , userid({}) message({})", userid, messageContext.toString());
+            ServerPushMonitorManage.getInstance().endError(userid);
             OfflineMessageManage.getInstance().addMessage(userid, messageContext);
             return;
         }
 
         // online
-        send(toUserChannel, messageContext, new Consumer<Boolean>() {
-
-            @Override
-            public void accept(Boolean succ) {
-                if (succ) {
-                    SentMessageManage.getInstance().addMessage(userid, messageContext);
-                    serverPushOffline(userid, OfflineMessageManage.getInstance().pollMessage(userid));
-                } else {
-                    // failed
-                    log.debug("Server push offline message failed : userid({}) message({})",userid, messageContext.toString());
-                    OfflineMessageManage.getInstance().addMessage(userid, messageContext);
-                }
+        send(toUserChannel, messageContext, succ -> {
+            if (succ) {
+                ServerPushMonitorManage.getInstance().addCount(userid);
+                SentMessageManage.getInstance().addMessage(userid, messageContext);
+                serverPushOffline(userid, OfflineMessageManage.getInstance().pollMessage(userid));
+            } else {
+                // failed
+                log.debug("Server push offline message failed : userid({}) message({})", userid, messageContext.toString());
+                ServerPushMonitorManage.getInstance().endError(userid);
+                OfflineMessageManage.getInstance().addMessage(userid, messageContext);
             }
         });
     }
@@ -192,18 +206,15 @@ public class MessageOperate {
             return;
         }
 
-        send(toUserChannel, messageContext, new Consumer<Boolean>() {
-            @Override
-            public void accept(Boolean succ) {
-                if (callback != null) {
-                    callback.accept(succ);
-                }
-                if (succ) {
-                    SentMessageManage.getInstance().addMessage(userid, messageContext);
-                }else{
-                    // failed
-                    OfflineMessageManage.getInstance().addMessage(userid, messageContext);
-                }
+        send(toUserChannel, messageContext, succ -> {
+            if (callback != null) {
+                callback.accept(succ);
+            }
+            if (succ) {
+                SentMessageManage.getInstance().addMessage(userid, messageContext);
+            } else {
+                // failed
+                OfflineMessageManage.getInstance().addMessage(userid, messageContext);
             }
         });
     }

@@ -2,7 +2,6 @@ package com.hwl.im.server;
 
 import com.hwl.im.core.ImCoreConfig;
 import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.core.imqos.RetryMessageManage;
 import com.hwl.im.core.imstore.OfflineMessageManage;
 import com.hwl.imcore.improto.ImMessageContext;
 
@@ -75,9 +74,6 @@ public class IMServerLauncher {
 
         // init server config
         this.initConfig();
-
-        // retry
-        RetryMessageManage.getInstance().startup();
     }
 
     public void bind() throws InterruptedException {

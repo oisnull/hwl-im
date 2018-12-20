@@ -47,14 +47,13 @@ public class AddFriendMessageReceiveExecutor extends AbstractMessageReceiveExecu
         ImMessageContext messageContext = super.getMessageContext(response);
 
         Long userid = request.getAddFriendMessageContent().getToUserId();
-        MessageOperate.serverPushOffline(userid, messageContext);
-//        MessageOperate.serverSendAndRetry(userid, messageContext, (succ) -> {
-//            if (succ) {
-//                log.debug("Server push add friend message success : {}", messageContext.toString());
-//            } else {
-//                log.error("Server push add friend message failed : {}", messageContext.toString());
-//            }
-//        });
+        MessageOperate.serverPushOnline(userid, messageContext, (succ) -> {
+            if (succ) {
+                log.debug("Server push add friend message success : {}", messageContext.toString());
+            } else {
+                log.error("Server push add friend message failed : {}", messageContext.toString());
+            }
+        });
     }
 
     @Override
