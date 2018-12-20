@@ -63,19 +63,13 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceiveExecu
         userIds.remove(groupMessageContent.getFromUserId());
 
         for (Long userid : userIds) {
-            if (OnlineManage.getInstance().isOnline(userid)) {
-                // online
-                MessageOperate.serverPushTimely(userid, messageContext, (succ) -> {
-                    if (succ) {
-                        log.debug("Server push chat group message success : {}", messageContext.toString());
-                    } else {
-                        log.error("Server push chat group message failed : {}", messageContext.toString());
-                    }
-                });
-            } else {
-                // offline
-                OfflineMessageManage.getInstance().addMessage(userid, messageContext);
-            }
+             MessageOperate.serverPushOnline(userid, messageContext, (succ) -> {
+                if (succ) {
+                    log.debug("Server push chat group message success : {}", messageContext.toString());
+                } else {
+                    log.error("Server push chat group message failed : {}", messageContext.toString());
+                }
+            });
         }
 
     }

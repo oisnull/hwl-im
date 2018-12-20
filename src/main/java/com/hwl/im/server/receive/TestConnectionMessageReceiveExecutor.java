@@ -21,7 +21,7 @@ public class TestConnectionMessageReceiveExecutor extends AbstractMessageReceive
                 .build());
         ImMessageContext messageContext = super.getMessageContext(response);
 
-        MessageOperate.serverPushTimely(request.getFromUserId(), messageContext, (succ) -> {
+        MessageOperate.serverPushOnline(request.getFromUserId(), messageContext, (succ) -> {
             if (succ) {
                 log.debug("Server push test connection message success : {}", messageContext.toString());
             } else {

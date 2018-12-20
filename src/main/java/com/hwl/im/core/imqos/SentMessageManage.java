@@ -39,6 +39,17 @@ public class SentMessageManage {
         }
     }
 
+	public ImMessageContext pollMessage(long userId){
+		if (userId <= 0)
+			return null;
+
+		LinkedList<ImMessageContext> messages = sentMessageContainer.get(userid);
+		if (messageContexts == null || messageContexts.size() <= 0)
+			return null;
+
+		return messageContexts.poll();
+	}
+
     public LinkedList<ImMessageContext> getMessages(long userId) {
         if (userId <= 0) return null;
 
@@ -55,7 +66,9 @@ public class SentMessageManage {
             sentMessageContainer.put(userId, messages);
         } else {
             //lock list
-            messages.add(messageContext);
+			synchronized(messages){
+				messages.add(messageContext);
+			}
             // if (messages.size() >= MAX_MESSAGE_COUNT) {
             // this.operateListener.onMessageMaximized(userId, messageContext);
             // } else {
