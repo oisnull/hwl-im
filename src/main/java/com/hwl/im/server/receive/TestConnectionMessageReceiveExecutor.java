@@ -19,19 +19,24 @@ public class TestConnectionMessageReceiveExecutor extends AbstractMessageReceive
                 .setContent("Hello client-" + request.getFromUserId())
                 .setSendTime(System.currentTimeMillis())
                 .build());
-        ImMessageContext messageContext = super.getMessageContext(response);
-
-        MessageOperate.serverPushOnline(request.getFromUserId(), messageContext, (succ) -> {
-            if (succ) {
-                log.debug("Server push test connection message success : {}", messageContext.toString());
-            } else {
-                log.error("Server push test connection message failed : {}", messageContext.toString());
-            }
-        });
+//        ImMessageContext messageContext = super.getMessageContext(response);
+//
+//        MessageOperate.serverPushOnline(request.getFromUserId(), messageContext, (succ) -> {
+//            if (succ) {
+//                log.debug("Server push test connection message success : {}", messageContext.toString());
+//            } else {
+//                log.error("Server push test connection message failed : {}", messageContext.toString());
+//            }
+//        });
     }
 
     @Override
     public ImMessageType getMessageType() {
         return ImMessageType.TestConnection;
+    }
+
+    @Override
+    public boolean isResponseNull() {
+        return false;
     }
 }

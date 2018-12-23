@@ -1,6 +1,7 @@
 package com.hwl.im.core.imom;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,13 +110,13 @@ public class OnlineManage {
         return onlineChannels.get(sessid);
     }
 
-    public void setChannelSessionid(Long userid, String sessionid, Channel channel) {
+    public void setChannelSessionid(Long userid, String sessionid, Channel channel, Consumer<Boolean> operateCallback) {
         if (userid <= 0 || sessionid == null || sessionid.isEmpty() || channel == null) {
             log.error("setChannelSessionid : userid = {} , sessionid = {} , channel = {}", userid, sessionid,
                     channel.remoteAddress());
             return;
         }
-        sessionManager.setSession(userid, sessionid);
+        sessionManager.setSession(userid, sessionid,operateCallback);
         channel.attr(USER_SESSION_IDENTITY_ATTR).set(sessionid);
         onlineChannels.put(sessionid, channel);
     }

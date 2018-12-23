@@ -7,6 +7,8 @@ import org.apache.logging.log4j.Logger;
 
 import redis.clients.jedis.Transaction;
 
+import java.util.function.Consumer;
+
 public class SessionStorage implements OnlineSessionStorageMedia {
 
     static Logger log = LogManager.getLogger(SessionStorage.class.getName());
@@ -28,7 +30,7 @@ public class SessionStorage implements OnlineSessionStorageMedia {
     }
 
     @Override
-    public void setSession(Long userid, String sessionid) {
+    public void setSession(Long userid, String sessionid, Consumer<Boolean> operateCallback) {
         if (userid <= 0)
             return;
         if (sessionid == null || sessionid.isEmpty())
@@ -40,9 +42,11 @@ public class SessionStorage implements OnlineSessionStorageMedia {
                 tran.set(String.valueOf(userid), sessionid);
                 tran.set(sessionid, String.valueOf(userid));
                 tran.exec();
+                operateCallback.accept(true);
                 log.debug("Set user session success , userid:{} ,sessionid:{}", userid, sessionid);
             } catch (Exception e) {
                 tran.discard();
+                operateCallback.accept(false);
                 log.debug("Set user session failed , userid:{} ,sessionid:{} , error info : {}", userid, sessionid,
                         e.getMessage());
             }

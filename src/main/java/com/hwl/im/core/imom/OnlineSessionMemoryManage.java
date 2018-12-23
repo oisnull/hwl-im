@@ -1,6 +1,7 @@
 package com.hwl.im.core.imom;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import com.hwl.im.core.ImCoreCommon;
 
@@ -20,22 +21,24 @@ public class OnlineSessionMemoryManage implements OnlineSessionStorageMedia {
         }
         return onlineSessions.get(userid);
     }
-	
+
     @Override
-    public long getUserId(String sessionid){
-		if (sessionid == null || sessionid.trim().equals("")) {
+    public long getUserId(String sessionid) {
+        if (sessionid == null || sessionid.trim().equals("")) {
             return 0;
         }
         return ImCoreCommon.getKeyByValue(onlineSessions, sessionid);
-	}
+    }
 
     @Override
-    public void setSession(Long userid, String sessionid) {
+    public void setSession(Long userid, String sessionid, Consumer<Boolean> operateCallback) {
         if (userid <= 0 || sessionid == null || sessionid.trim().equals("")) {
+            operateCallback.accept(false);
             log.error("setSession : userid = {} , sessionid = {}", userid, sessionid);
             return;
         }
         onlineSessions.put(userid, sessionid);
+        operateCallback.accept(true);
     }
 
 //    @Override

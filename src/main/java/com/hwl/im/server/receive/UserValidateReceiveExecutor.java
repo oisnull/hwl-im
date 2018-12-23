@@ -10,6 +10,7 @@ import com.hwl.imcore.improto.ImUserValidateResponse;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<ImUserValidateRequest> {
 
@@ -57,17 +58,25 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<
             //send message to online user
         }
 
-        sessionid = UUID.randomUUID().toString().replace("-", "");//request.getUserId() + "-sessionid-test-001";
-        OnlineManage.getInstance().setChannelSessionid(request.getUserId(), sessionid, channel);
-        response.setUserValidateResponse(
-                ImUserValidateResponse.newBuilder().setIsSuccess(true).setIsOnline(false).setSessionid(sessionid).build());
+        final String newSessionid = UUID.randomUUID().toString().replace("-", "");
+        OnlineManage.getInstance().setChannelSessionid(request.getUserId(), newSessionid, channel, new Consumer<Boolean>() {
+            @Override
+            public void accept(Boolean succ) {
+                if (succ) {
+                    response.setUserValidateResponse(
+                            ImUserValidateResponse.newBuilder().setIsSuccess(true).setIsOnline(false).setSessionid(newSessionid).build());
 
-        // start offline message push process
-        MessageOperate.serverPushOffline(request.getUserId(), request.getMessageid());
+                    // start offline message push process
+                    MessageOperate.serverPushOffline(request.getUserId(), request.getMessageid());
+                } else {
+                    response.setUserValidateResponse(
+                            ImUserValidateResponse.newBuilder().setIsSuccess(false).setMessage("set session failed").setIsOnline(false).setSessionid(newSessionid).build());
+                }
+            }
+        });
     }
 
     private boolean checkUserInfo() {
         return request.getToken().equals(TokenStorage.getUserToken(request.getUserId()));
     }
-
 }

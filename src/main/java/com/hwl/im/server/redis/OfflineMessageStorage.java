@@ -1,5 +1,6 @@
 package com.hwl.im.server.redis;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +31,21 @@ public class OfflineMessageStorage implements OfflineMessageStorageMedia {
 
     @Override
     public void addMessages(long userid, LinkedList<ImMessageContext> messageContexts) {
+        if (userid <= 0 || messageContexts == null || messageContexts.size() <= 0)
+            return;
 
+        List<byte[]> datas = new ArrayList<>();
+        for (int i = 0; i < messageContexts.size(); i++) {
+
+        }
+
+        RedisUtil.exec(RedisUtil.OFFLINE_MESSAGE_DB,
+                client -> {
+                    for (int i = 0; i < messageContexts.size(); i++) {
+                        client.lpush(getStoreKey(userid), messageContexts.get(i).toByteArray());
+                    }
+                    return null;
+                });
     }
 
     @Override

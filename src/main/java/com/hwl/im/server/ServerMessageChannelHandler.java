@@ -16,7 +16,7 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImMessageContext> {
-    static boolean isDebug = false;
+    //    static boolean isDebug = false;
     static Logger log = LogManager.getLogger(ServerMessageChannelHandler.class.getName());
 
     @Override
@@ -24,6 +24,7 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.ALL_IDLE) {
+                log.debug("Server : client channel disconnected , " + ctx.channel().remoteAddress());
                 ctx.channel().close();
             }
             log.debug("Server : client will disconnect , " + ctx.channel().remoteAddress());
@@ -33,13 +34,13 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ImMessageContext msg) throws Exception {
         log.debug("Server channel read : {}", msg.toString());
-        
+
         MessageReceiveExecutor receiveExecutor = MessageExecuteFactory.create(msg);
-        if (receiveExecutor == null)
-            return;
+        if (receiveExecutor == null) return;
 
         receiveExecutor.setChannel(ctx.channel());
         ImMessageContext response = receiveExecutor.execute();
+        if (response == null) return;
 
         MessageOperate.send(ctx.channel(), response, new Consumer<Boolean>() {
             @Override
@@ -57,7 +58,7 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.debug("Server channel inactive: remote client {} disconnect ", ctx.channel().remoteAddress());
-		MessageOperate.moveSentMessageIntoOffline(OnlineManage.getInstance().getUserId(ctx.channel()));
+        MessageOperate.moveSentMessageIntoOffline(OnlineManage.getInstance().getUserId(ctx.channel()));
         OnlineManage.getInstance().removeChannel(ctx.channel());
     }
 

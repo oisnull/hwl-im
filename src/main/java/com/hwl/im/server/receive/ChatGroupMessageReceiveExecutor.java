@@ -71,7 +71,6 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceiveExecu
                 }
             });
         }
-
     }
 
     @Override
