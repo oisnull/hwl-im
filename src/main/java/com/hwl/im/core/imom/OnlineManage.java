@@ -18,7 +18,7 @@ public class OnlineManage {
     private static OnlineManage instance = new OnlineManage();
     private static Logger log = LogManager.getLogger(OnlineManage.class.getName());
     private static OnlineSessionStorageMedia sessionManager = new OnlineSessionMemoryManage();
-	
+
     private boolean isDeugger = true;
 
     private OnlineManage() {
@@ -65,11 +65,11 @@ public class OnlineManage {
     }
 
     public void removeChannel(Channel channel) {
-		String key = channel.attr(USER_SESSION_IDENTITY_ATTR).get();
-		if (key != null) {
-			sessionManager.removeSession(key);
-			onlineChannels.remove(key);
-		}
+        String key = channel.attr(USER_SESSION_IDENTITY_ATTR).get();
+        if (key != null) {
+            sessionManager.removeSession(key);
+            onlineChannels.remove(key);
+        }
 
         printLog();
     }
@@ -80,8 +80,8 @@ public class OnlineManage {
         return sessionManager.getSession(userid);
     }
 
-    public long getUserId(Channel channel) {   
-        String key = channel.attr(USER_SESSION_IDENTITY_ATTR).get();     
+    public long getUserId(Channel channel) {
+        String key = channel.attr(USER_SESSION_IDENTITY_ATTR).get();
         return sessionManager.getUserId(key);
     }
 
@@ -96,6 +96,13 @@ public class OnlineManage {
         if (sessionid == null || sessionid.isEmpty())
             return false;
         return onlineChannels.containsKey(sessionid);
+    }
+
+    public boolean isOnline(Channel channel) {
+        long userId = getUserId(channel);
+        if (userId <= 0) return false;
+        Channel uc = getChannel(userId);
+        return uc.isActive();
     }
 
     public Channel getChannel(Long userid) {
@@ -116,7 +123,7 @@ public class OnlineManage {
                     channel.remoteAddress());
             return;
         }
-        sessionManager.setSession(userid, sessionid,operateCallback);
+        sessionManager.setSession(userid, sessionid, operateCallback);
         channel.attr(USER_SESSION_IDENTITY_ATTR).set(sessionid);
         onlineChannels.put(sessionid, channel);
     }

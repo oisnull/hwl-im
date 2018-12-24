@@ -41,7 +41,8 @@ public class OfflineMessageStorage implements OfflineMessageStorageMedia {
 
         RedisUtil.exec(RedisUtil.OFFLINE_MESSAGE_DB,
                 client -> {
-                    for (int i = 0; i < messageContexts.size(); i++) {
+                    int msgCount = messageContexts.size() - 1;
+                    for (int i = msgCount; i >= 0; i--) {
                         client.lpush(getStoreKey(userid), messageContexts.get(i).toByteArray());
                     }
                     return null;
