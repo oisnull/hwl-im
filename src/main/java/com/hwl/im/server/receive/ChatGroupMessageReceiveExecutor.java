@@ -47,7 +47,7 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceiveExecu
     @Override
     public void executeCore(Builder response) {
         response.setChatGroupMessageResponse(
-                ImChatGroupMessageResponse.newBuilder().setChatGroupMessageContent(request.getChatGroupMessageContent())
+                ImChatGroupMessageResponse.newBuilder().setChatGroupMessageContent(groupMessageContent)
                         .setBuildTime(System.currentTimeMillis()).build());
         ImMessageContext messageContext = super.getMessageContext(response);
 

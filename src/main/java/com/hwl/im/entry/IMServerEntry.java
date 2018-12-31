@@ -134,5 +134,23 @@ public class IMServerEntry {
                     }
 
                 });
+
+        config.registerReceiveExecutor(ImMessageType.ChatSetting,
+                new Function<ImMessageRequest, MessageReceiveExecutor>() {
+                    @Override
+                    public MessageReceiveExecutor apply(ImMessageRequest t) {
+                        return new ChatSettingMessageReceiveExecutor(t.getChatSettingMessageRequest());
+                    }
+
+                });
+
+        config.registerReceiveExecutor(ImMessageType.GroupOperate,
+                new Function<ImMessageRequest, MessageReceiveExecutor>() {
+                    @Override
+                    public MessageReceiveExecutor apply(ImMessageRequest t) {
+                        return new GroupOperateMessageReceiveExecutor(t.getGroupOperateMessageRequest());
+                    }
+
+                });
     }
 }
