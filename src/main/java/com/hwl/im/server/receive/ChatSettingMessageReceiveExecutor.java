@@ -41,22 +41,8 @@ public class ChatSettingMessageReceiveExecutor extends AbstractMessageReceiveExe
                         .setBuildTime(System.currentTimeMillis()).build());
         ImMessageContext messageContext = super.getMessageContext(response);
 
-//        switch (settingMessageContent.getSettingType()) {
-//            case GroupName:
-//                break;
-//            case GroupNote:
-//                break;
-//            case UserRemark:
-//                break;
-//            case SettingNone:
-//                break;
-//            case UNRECOGNIZED:
-//                break;
-//        }
-
-        List<Long> userIds = GroupStorage.getGroupUsers(settingMessageContent.getGroupName());
-        if (userIds == null || userIds.size() <= 0)
-            return;
+        List<Long> userIds = GroupStorage.getGroupUsers(settingMessageContent.getGroupGuid());
+        if (userIds == null || userIds.size() <= 0) return;
 
         //remove current userid
         userIds.remove(settingMessageContent.getSettingUser().getUserId());

@@ -21,7 +21,7 @@ public class GroupOperateMessageReceiveExecutor extends AbstractMessageReceiveEx
 
     @Override
     public ImMessageType getMessageType() {
-        return ImMessageType.ChatSetting;
+        return ImMessageType.GroupOperate;
     }
 
     @Override
@@ -42,8 +42,7 @@ public class GroupOperateMessageReceiveExecutor extends AbstractMessageReceiveEx
         ImMessageContext messageContext = super.getMessageContext(response);
 
         List<Long> userIds = GroupStorage.getGroupUsers(groupOperateMessageContent.getGroupGuid());
-        if (userIds == null || userIds.size() <= 0)
-            return;
+        if (userIds == null || userIds.size() <= 0) return;
 
         //remove current userid
         userIds.remove(groupOperateMessageContent.getOperateUser().getUserId());
