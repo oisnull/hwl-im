@@ -152,5 +152,14 @@ public class IMServerEntry {
                     }
 
                 });
+
+        config.registerReceiveExecutor(ImMessageType.NearCircleOperate,
+                new Function<ImMessageRequest, MessageReceiveExecutor>() {
+                    @Override
+                    public MessageReceiveExecutor apply(ImMessageRequest t) {
+                        return new NearCircleOperateMessageReceiveExecutor(t.getNearCircleOperateMessageRequest());
+                    }
+
+                });
     }
 }

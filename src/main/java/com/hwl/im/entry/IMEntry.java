@@ -17,8 +17,8 @@ public class IMEntry {
         if (args == null || args.length <= 0) {
 //            errorDesc();
 //            return;
-            args = new String[]{"imserver", "192.168.5.6", "8081"};
-//            args = new String[]{"imclient", "192.168.5.6", "8081", "6", "634d6c08c53c9e67c99b4e449aa5dd24"};
+            args = new String[]{"imserver", "192.168.1.5", "8081"};
+//            args = new String[]{"imclient", "192.168.1.5", "8081", "6", "634d6c08c53c9e67c99b4e449aa5dd24"};
         }
 
         String firstCmd = args[0].toLowerCase();

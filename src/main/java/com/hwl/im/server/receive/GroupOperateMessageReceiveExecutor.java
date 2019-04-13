@@ -42,10 +42,9 @@ public class GroupOperateMessageReceiveExecutor extends AbstractMessageReceiveEx
         ImMessageContext messageContext = super.getMessageContext(response);
 
         List<Long> userIds = GroupStorage.getGroupUsers(groupOperateMessageContent.getGroupGuid());
-        if (userIds == null || userIds.size() <= 0) return;
-
         //remove current userid
         userIds.remove(groupOperateMessageContent.getOperateUser().getUserId());
+        if (userIds == null || userIds.size() <= 0) return;
 
         for (Long userid : userIds) {
              MessageOperate.serverPushOnline(userid, messageContext, (succ) -> {
