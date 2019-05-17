@@ -1,7 +1,7 @@
 # hwl-im
 java (netty,protobuf3)
 
-### How use? ###
+### How useage? ###
 **Sever step:**
 ```
 1, Definition request model and response model in protocol file(file path is "src\main\java\com\hwl\im\protocol\im_message.proto")
