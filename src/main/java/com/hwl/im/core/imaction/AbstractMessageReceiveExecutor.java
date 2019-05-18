@@ -34,7 +34,7 @@ public abstract class AbstractMessageReceiveExecutor<TRequest> implements Messag
             throw new NullPointerException("request");
         }
         if (this.isCheckSessionid() && !MessageRequestHeadOperate.isSessionValid(this.requestHead)) {
-            throw new RequestSessionInvalidException("sessionid is invalid");
+            throw new RequestSessionInvalidException("session id is invalid");
         }
     }
 
@@ -62,10 +62,10 @@ public abstract class AbstractMessageReceiveExecutor<TRequest> implements Messag
             this.checkRequestParams();
             this.executeCore(msgResponse);
         } catch (RequestSessionInvalidException e) {
-            log.error("Server executor : {}", e.getMessage());
+            log.error("Server session invalid exception executor : {}", e.getMessage());
             responseHead.setCode(ImMessageResponseCode.SessionidInvalid_VALUE).setMessage(e.getMessage());
         } catch (Exception e) {
-            log.error("Server executor : {}", e.getMessage());
+            log.error("Server exception executor : {}", e.getMessage());
             responseHead.setCode(ImMessageResponseCode.Failed_VALUE).setMessage(e.getMessage());
         }
 

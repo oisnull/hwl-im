@@ -1,5 +1,7 @@
 package com.hwl.im.entry;
 
+import com.hwl.im.IMConfig;
+
 import java.io.IOException;
 
 public class IMEntry {
@@ -7,6 +9,7 @@ public class IMEntry {
     /**
      * windows :
      * java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imserver 192.168.5.6 8081
+     * java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imserver 115.29.179.171 8017
      * java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imclient 192.168.5.6 8081 9 001574da98db4a3024ada63f61f0788a
      * <p>
      * reset design :
@@ -17,7 +20,7 @@ public class IMEntry {
         if (args == null || args.length <= 0) {
 //            errorDesc();
 //            return;
-            args = new String[]{"imserver", "192.168.1.5", "8081"};
+            args = new String[]{IMConfig.ENTRY_DEFAULT_IDENTITY, IMConfig.ENTRY_DEFAULT_HOST, IMConfig.ENTRY_DEFAULT_PORT};
 //            args = new String[]{"imclient", "192.168.1.5", "8081", "6", "634d6c08c53c9e67c99b4e449aa5dd24"};
         }
 

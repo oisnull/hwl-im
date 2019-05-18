@@ -8,11 +8,14 @@ import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.imcore.improto.ImUserValidateRequest;
 import com.hwl.imcore.improto.ImUserValidateResponse;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;
 import java.util.function.Consumer;
 
 public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<ImUserValidateRequest> {
+//    private static Logger log = LogManager.getLogger(UserValidateReceiveExecutor.class.getName());
 
     public UserValidateReceiveExecutor(ImUserValidateRequest request) {
         super(request);
@@ -22,7 +25,7 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<
     protected void checkRequestParams() {
         super.checkRequestParams();
         if (request.getUserId() <= 0)
-            throw new NullPointerException("userid con not be empty");
+            throw new NullPointerException("user id con not be empty");
         if (request.getToken() == null || request.getToken().trim().equals(""))
             throw new NullPointerException("token con not be empty");
     }
@@ -44,10 +47,11 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<
 
     @Override
     public void executeCore(Builder response) {
+//        log.info("Start execute core.");
 
         if (!checkUserInfo()) {
             response.setUserValidateResponse(
-                    ImUserValidateResponse.newBuilder().setIsSuccess(false).setMessage("Userid or token is invalid").build());
+                    ImUserValidateResponse.newBuilder().setIsSuccess(false).setMessage("User id or token is invalid").build());
             return;
         }
 
@@ -59,13 +63,16 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<
         }
 
         final String newSessionid = UUID.randomUUID().toString().replace("-", "");
+//        log.info("Set new session id is {}.", newSessionid);
         OnlineManage.getInstance().setChannelSessionid(request.getUserId(), newSessionid, channel, new Consumer<Boolean>() {
             @Override
             public void accept(Boolean succ) {
+//                log.info("Set session id {}.", succ.toString());
                 if (succ) {
                     response.setUserValidateResponse(
                             ImUserValidateResponse.newBuilder().setIsSuccess(true).setIsOnline(false).setSessionid(newSessionid).build());
 
+//                    log.info("Start offline message push process for user id ({})", request.getUserId());
                     // start offline message push process
                     MessageOperate.serverPushOffline(request.getUserId(), request.getMessageid());
                 } else {
@@ -77,6 +84,8 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<
     }
 
     private boolean checkUserInfo() {
-        return request.getToken().equals(TokenStorage.getUserToken(request.getUserId()));
+        boolean flag = request.getToken().equals(TokenStorage.getUserToken(request.getUserId()));
+//        log.info("Check user info {}.", flag);
+        return flag;
     }
 }

@@ -10,7 +10,6 @@ import com.hwl.im.server.IMServerLauncherConfig;
 import com.hwl.im.server.receive.*;
 import com.hwl.im.server.redis.OfflineMessageStorage;
 import com.hwl.im.server.redis.SessionStorage;
-import com.hwl.imcore.improto.ImTestConnectionMessageRequest;
 
 public class IMServerEntry {
 
@@ -158,6 +157,15 @@ public class IMServerEntry {
                     @Override
                     public MessageReceiveExecutor apply(ImMessageRequest t) {
                         return new NearCircleOperateMessageReceiveExecutor(t.getNearCircleOperateMessageRequest());
+                    }
+
+                });
+
+        config.registerReceiveExecutor(ImMessageType.NearCircleOperate,
+                new Function<ImMessageRequest, MessageReceiveExecutor>() {
+                    @Override
+                    public MessageReceiveExecutor apply(ImMessageRequest t) {
+                        return new CircleOperateMessageReceiveExecutor(t.getCircleOperateMessageRequest());
                     }
 
                 });
