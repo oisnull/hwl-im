@@ -1,6 +1,5 @@
-package com.hwl.im.core.imaction;
+package com.hwl.im.server.core;
 
-import com.hwl.im.core.immode.MessageRequestHeadOperate;
 import com.hwl.im.core.immode.RequestSessionInvalidException;
 import com.hwl.imcore.improto.ImMessageContext;
 import com.hwl.imcore.improto.ImMessageRequestHead;
@@ -15,15 +14,23 @@ import io.netty.channel.Channel;
 
 import java.util.UUID;
 
-public abstract class AbstractMessageReceiveExecutor<TRequest> implements MessageReceiveExecutor {
+public abstract class AbstractMessageReceiveExecutor<TRequest> implements ServerMessageReceiveExecutor {
     private static Logger log = LogManager.getLogger(AbstractMessageReceiveExecutor.class.getName());
+    private IRequestValidator requestValidator;
 
     protected ImMessageRequestHead requestHead;
+    protected ImMessageType messageType;
     protected TRequest request;
     protected Channel channel;
 
     public AbstractMessageReceiveExecutor(TRequest request) {
         this.request = request;
+    }
+	
+    @Override
+    public void setRequestValidator(IRequestValidator validator)
+    {
+        this.requestValidator = validator;
     }
 
     protected void checkRequestParams() {
@@ -33,63 +40,49 @@ public abstract class AbstractMessageReceiveExecutor<TRequest> implements Messag
         if (this.request == null) {
             throw new NullPointerException("request");
         }
-        if (this.isCheckSessionid() && !MessageRequestHeadOperate.isSessionValid(this.requestHead)) {
+        if (this.isCheckSessionid() && !requestValidator.isSessionValid(this.requestHead)) {
             throw new RequestSessionInvalidException("session id is invalid");
         }
     }
 
     @Override
-    public final void setRequestHead(ImMessageRequestHead requestHead) {
+    public final ImMessageContext execute(ImMessageType messageType, ImMessageRequestHead requestHead, IChannel channel){
         this.requestHead = requestHead;
-    }
-
-    @Override
-    public final void setChannel(Channel channel) {
+        this.messageType = messageType;
         this.channel = channel;
-    }
 
-    @Override
-    public final ImMessageContext execute() {
-        ImMessageResponseHead.Builder responseHead = ImMessageResponseHead.newBuilder();
-        responseHead.setCode(ImMessageResponseCode.Success_VALUE)
-					.setMessage("")
-					.setIsack(isAck())
-					.setMessageid(getMessageId());
-
+        ImMessageResponseHead.Builder responseHead = ImMessageResponseHead.newBuilder().setCode(ImMessageResponseCode.Success_VALUE);
         ImMessageResponse.Builder msgResponse = ImMessageResponse.newBuilder().setResponseHead(responseHead);
 
-        try {
+		 try {
+			if(isAck()){
+				String messageId=UUID.randomUUID().toString().replace("-", "");
+				responseHead.setIsack(true).setMessageid(messageId);
+			}
             this.checkRequestParams();
             this.executeCore(msgResponse);
+            return null;
         } catch (RequestSessionInvalidException e) {
             log.error("Server session invalid exception executor : {}", e.getMessage());
-            responseHead.setCode(ImMessageResponseCode.SessionidInvalid_VALUE).setMessage(e.getMessage());
+            responseHead.setCode(ImMessageResponseCode.SessionidInvalid_VALUE)
+						.setMessage(e.getMessage())
+						.setIsack(false);
         } catch (Exception e) {
             log.error("Server exception executor : {}", e.getMessage());
-            responseHead.setCode(ImMessageResponseCode.Failed_VALUE).setMessage(e.getMessage());
+            responseHead.setCode(ImMessageResponseCode.Failed_VALUE)
+						.setMessage(e.getMessage())
+						.setIsack(false);
         }
 
-        if (this.isResponseNull()) {
-            return null;
-        }
-
-        return this.getMessageContext(msgResponse);
-    }
-	
-	private String getMessageId(){
-		return UUID.randomUUID().toString().replace("-", "");
+        return getMessageContext(msgResponse);
 	}
 
     protected ImMessageContext getMessageContext(ImMessageResponse.Builder response) {
-        return ImMessageContext.newBuilder().setResponse(response).setType(getMessageType()).build();
+        return ImMessageContext.newBuilder().setResponse(response).setType(messageType).build();
     }
 
     protected boolean isAck() {
         return false;
-    }
-
-    public boolean isResponseNull() {
-        return true;
     }
 
     public boolean isCheckSessionid() {

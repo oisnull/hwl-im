@@ -1,18 +1,18 @@
-package com.hwl.im.server.redis;
+package com.hwl.im.server.redis.store;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.hwl.im.core.imstore.OfflineMessageStorageMedia;
+import com.hwl.im.server.extra.IOfflineMessageStorage;
 import com.hwl.imcore.improto.ImMessageContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class OfflineMessageStorage implements OfflineMessageStorageMedia {
+public class OfflineMessageStore implements IOfflineMessageStorage {
 
-    static Logger log = LogManager.getLogger(OfflineMessageStorage.class.getName());
+    static Logger log = LogManager.getLogger(OfflineMessageStore.class.getName());
 
     private static byte[] getStoreKey(Long userid) {
         return String.format("offlinemsg:%d", userid).getBytes();

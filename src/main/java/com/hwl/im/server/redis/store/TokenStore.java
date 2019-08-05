@@ -1,6 +1,6 @@
-package com.hwl.im.server.redis;
+package com.hwl.im.server.redis.store;
 
-public class TokenStorage {
+public class TokenStore {
     public static String getUserToken(long userId) {
         if (userId <= 0)
             return null;

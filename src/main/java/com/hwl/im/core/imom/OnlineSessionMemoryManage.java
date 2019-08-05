@@ -3,7 +3,7 @@ package com.hwl.im.core.imom;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import com.hwl.im.core.ImCoreCommon;
+import com.hwl.im.server.ImCoreCommon;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

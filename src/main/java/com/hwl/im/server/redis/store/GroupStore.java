@@ -1,12 +1,12 @@
-package com.hwl.im.server.redis;
+package com.hwl.im.server.redis.store;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class GroupStorage {
+public class GroupStore {
 
-    public static List<Long> getGroupUsers(String groupGuid) {
+    public static List<long> getGroupUsers(String groupGuid) {
         if (groupGuid == null || groupGuid.isEmpty())
             return null;
 
@@ -14,8 +14,8 @@ public class GroupStorage {
         if (ids == null || ids.size() <= 0)
             return null;
 
-        List<Long> userIds = new ArrayList<>(ids.size());
-        ids.forEach(id -> userIds.add(Long.parseLong(id)));
+        List<long> userIds = new ArrayList<>(ids.size());
+        ids.forEach(id -> userIds.add(long.parseLong(id)));
         return userIds;
     }
 

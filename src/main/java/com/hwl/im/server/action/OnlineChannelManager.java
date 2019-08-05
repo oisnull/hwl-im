@@ -1,4 +1,4 @@
-package com.hwl.im.core.imom;
+package com.hwl.im.server.action;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 
-public class OnlineManage {
+public class OnlineChannelManager {
 
     public final static String USER_SESSION_IDENTITY = "user-session-identity";
     public final static AttributeKey<String> USER_SESSION_IDENTITY_ATTR = AttributeKey.valueOf(USER_SESSION_IDENTITY);
@@ -17,9 +17,9 @@ public class OnlineManage {
     private final static ConcurrentHashMap<String, Channel> onlineChannels = new ConcurrentHashMap<String, Channel>();
     private static OnlineManage instance = new OnlineManage();
     private static Logger log = LogManager.getLogger(OnlineManage.class.getName());
-    private static OnlineSessionStorageMedia sessionManager = new OnlineSessionMemoryManage();
 
     private boolean isDeugger = true;
+    private IOnlineSessionStorage sessionManager = null;
 
     private OnlineManage() {
     }
@@ -31,9 +31,12 @@ public class OnlineManage {
         return instance;
     }
 
-    public static void setSessionStorageMedia(OnlineSessionStorageMedia sessionStorageMedia) {
-        if (sessionStorageMedia != null) {
-            sessionManager = sessionStorageMedia;
+    public static void setSessionStorage(IOnlineSessionStorage sessionStorage)
+    {
+        instance._sessionManager = sessionStorage;
+        if (sessionStorage == null)
+        {
+            throw new ArgumentNullException("sessionStorage");
         }
     }
 
@@ -123,8 +126,9 @@ public class OnlineManage {
                     channel.remoteAddress());
             return;
         }
-        sessionManager.setSession(userid, sessionid, operateCallback);
+
         channel.attr(USER_SESSION_IDENTITY_ATTR).set(sessionid);
+        sessionManager.setSession(userid, sessionid, operateCallback);
         onlineChannels.put(sessionid, channel);
     }
 }

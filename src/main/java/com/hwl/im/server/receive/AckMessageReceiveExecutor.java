@@ -13,17 +13,12 @@ public class AckMessageReceiveExecutor extends AbstractMessageReceiveExecutor<Im
     }
 
     @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.ClientAckMessage;
-    }
-
-    @Override
     public boolean isCheckSessionid() {
         return false;
     }
 
     @Override
     public void executeCore(Builder response) {
-        MessageOperate.removeSentMessage(request.getFromUserId(), request.getMessageid());
+        ServerMessageOperator.getInstance().deleteSentMessage(request.getFromUserId(), request.getMessageid());
     }
 }

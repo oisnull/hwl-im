@@ -1,4 +1,4 @@
-package com.hwl.im.server;
+package com.hwl.im.server.core;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import com.hwl.imcore.improto.ImMessageContext;
 import com.hwl.imcore.improto.ImMessageRequest;
 import com.hwl.imcore.improto.ImMessageType;
 
-public class MessageExecuteFactory {
+public class ServerMessageExecuteFactory {
     private static Map<ImMessageType, Function<ImMessageRequest, MessageReceiveExecutor>> receiveExecutors = new HashMap<>();
 
     public static void registerReceiveExecutor(ImMessageType messageType,
@@ -26,24 +26,14 @@ public class MessageExecuteFactory {
         }
     }
 
-    public static MessageReceiveExecutor create(ImMessageContext requestMessageContext) {
-        if (requestMessageContext == null || receiveExecutors.size() <= 0)
+    public static MessageReceiveExecutor create(ImMessageType messageType,ImMessageRequest request) {
+        if (request == null || receiveExecutors.size() <= 0)
             return null;
 
-        ImMessageRequest request = requestMessageContext.getRequest();
-        if (request == null)
-            return null;
-
-        Function<ImMessageRequest, MessageReceiveExecutor> executorFunction = receiveExecutors
-                .get(requestMessageContext.getType());
+        Function<ImMessageRequest, MessageReceiveExecutor> executorFunction = receiveExecutors.get(messageType);
         if (executorFunction == null)
             return null;
 
-        MessageReceiveExecutor executor = executorFunction.apply(request);
-        if (executor == null)
-            return null;
-
-        executor.setRequestHead(request.getRequestHead());
-        return executor;
+        return executorFunction.apply(request);
     }
 }

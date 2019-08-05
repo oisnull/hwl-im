@@ -35,25 +35,16 @@ public class AddFriendMessageReceiveExecutor extends AbstractMessageReceiveExecu
     }
 
     @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.AddFriend;
-    }
-
-    @Override
     public void executeCore(ImMessageResponse.Builder response) {
         response.setAddFriendMessageResponse(
-                ImAddFriendMessageResponse.newBuilder().setAddFriendMessageContent(request.getAddFriendMessageContent())
-                        .setBuildTime(System.currentTimeMillis()).build());
+                ImAddFriendMessageResponse.newBuilder()
+				.setAddFriendMessageContent(request.getAddFriendMessageContent())
+				.setBuildTime(System.currentTimeMillis())
+				.build());
         ImMessageContext messageContext = super.getMessageContext(response);
 
         Long userid = request.getAddFriendMessageContent().getToUserId();
-        MessageOperate.serverPushOnline(userid, messageContext, (succ) -> {
-            if (succ) {
-                log.debug("Server push add friend message success : {}", messageContext.toString());
-            } else {
-                log.error("Server push add friend message failed : {}", messageContext.toString());
-            }
-        });
+        MessageOperate.serverPushOnline(userid, messageContext, false);
     }
 
     @Override

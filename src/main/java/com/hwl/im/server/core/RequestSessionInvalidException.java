@@ -1,4 +1,4 @@
-package com.hwl.im.core.immode;
+package com.hwl.im.server.core;
 
 public class RequestSessionInvalidException extends IllegalArgumentException
 {

@@ -1,4 +1,4 @@
-package com.hwl.im.server;
+package com.hwl.im.server.core;
 
 import com.hwl.im.core.ImCoreConfig;
 import com.hwl.im.core.imom.OnlineManage;
@@ -24,31 +24,28 @@ import io.netty.handler.timeout.IdleStateHandler;
 
 import java.util.concurrent.TimeUnit;
 
-public class IMServerLauncher {
-    static Logger log = LogManager.getLogger(IMServerLauncher.class.getName());
+public class IMServerEngine {
+    static Logger log = LogManager.getLogger(IMServerEngine.class.getName());
 
     private String host;
     private int port;
+    private IRequestValidator requestValidator;
 
     private EventLoopGroup receiveGroup;
     private EventLoopGroup workGroup;
     private ServerBootstrap bootstrap;
     private ChannelFuture channelFuture;
-    private IMServerLauncherConfig launcherConfig;
 
-    public IMServerLauncher(String host, int port) {
+    public IMServerEngine(String host, int port) {
         this.host = host;
         this.port = port;
+
         init();
     }
 
-    public void setLauncherConfig(IMServerLauncherConfig launcherConfig) {
-        if (launcherConfig == null) {
-            this.launcherConfig = new IMServerLauncherConfig();
-        } else {
-            this.launcherConfig = launcherConfig;
-        }
-        this.initConfig();
+    public void setRequestValidator(IRequestValidator requestValidator)
+    {
+        this.requestValidator = requestValidator;
     }
 
     private void init() {
@@ -67,13 +64,10 @@ public class IMServerLauncher {
                 pipeline.addLast(new ProtobufDecoder(ImMessageContext.getDefaultInstance()));
                 pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
                 pipeline.addLast(new ProtobufEncoder());
-
-                pipeline.addLast(new ServerMessageChannelHandler());
+				
+                pipeline.addLast(new ServerMessageChannelHandler(requestValidator));
             }
         });
-
-        // init server config
-        this.initConfig();
     }
 
     public void bind() throws InterruptedException {
@@ -88,18 +82,6 @@ public class IMServerLauncher {
         }
         if (workGroup != null) {
             workGroup.shutdownGracefully();
-        }
-    }
-
-    private void initConfig() {
-        if (this.launcherConfig != null) {
-            if (this.launcherConfig.sessionStorageMedia != null) {
-                OnlineManage.setSessionStorageMedia(this.launcherConfig.sessionStorageMedia);
-            }
-
-            if (this.launcherConfig.messageStorageMedia != null) {
-                OfflineMessageManage.setOfflineMessageStorageMedia(this.launcherConfig.messageStorageMedia);
-            }
         }
     }
 }

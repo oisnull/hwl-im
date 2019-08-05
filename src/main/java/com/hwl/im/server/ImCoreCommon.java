@@ -1,4 +1,4 @@
-package com.hwl.im.core;
+package com.hwl.im.server;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
