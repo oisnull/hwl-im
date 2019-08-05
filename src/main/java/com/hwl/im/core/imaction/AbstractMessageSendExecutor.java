@@ -2,7 +2,6 @@ package com.hwl.im.core.imaction;
 
 import java.util.function.Consumer;
 
-import com.hwl.im.core.immode.MessageRequestHeadOperate;
 import com.hwl.imcore.improto.ImMessageContext;
 import com.hwl.imcore.improto.ImMessageRequest;
 import com.hwl.imcore.improto.ImMessageRequestHead;
@@ -51,7 +50,8 @@ public abstract class AbstractMessageSendExecutor implements MessageSendExecutor
     }
 
     public ImMessageRequestHead getMessageHead() {
-        return MessageRequestHeadOperate.buildRequestHead();
+//        return MessageRequestHeadOperate.buildRequestHead();
+        return null;
     }
 
     // public abstract boolean checkBody();

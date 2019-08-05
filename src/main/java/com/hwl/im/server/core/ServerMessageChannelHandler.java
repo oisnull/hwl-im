@@ -1,10 +1,8 @@
 package com.hwl.im.server.core;
 
-import java.util.function.Consumer;
-
-import com.hwl.im.core.imaction.MessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
-import com.hwl.im.core.imom.OnlineManage;
+import com.hwl.im.server.action.OnlineChannelManager;
+import com.hwl.im.server.action.ServerMessageOperator;
+import com.hwl.im.server.extra.IRequestValidator;
 import com.hwl.imcore.improto.ImMessageContext;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,8 +18,8 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
     static Logger log = LogManager.getLogger(ServerMessageChannelHandler.class.getName());
 
     private IRequestValidator requestValidator;
-    public ServerMessageChannelHandler(IRequestValidator requestValidator)
-    {
+
+    public ServerMessageChannelHandler(IRequestValidator requestValidator) {
         this.requestValidator = requestValidator;
     }
 
@@ -41,10 +39,10 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
     protected void channelRead0(ChannelHandlerContext ctx, ImMessageContext msg) throws Exception {
         log.debug("Server channel read : {}", msg.toString());
 
-        ServerMessageReceiveExecutor receiveExecutor = ServerMessageExecuteFactory.create(msg.getType(),msg.getRequestMessage());
+        ServerMessageReceiveExecutor receiveExecutor = ServerMessageExecuteFactory.create(msg.getType(), msg.getRequest());
         receiveExecutor.setRequestValidator(requestValidator);
-		ImMessageContext response = receiveExecutor.execute(msg.getType(), msg.getRequest().getRequestHead(),ctx.channel());
-		if (response != null) ctx.writeAndFlush(response);
+        ImMessageContext response = receiveExecutor.execute(msg.getType(), msg.getRequest().getRequestHead(), ctx.channel());
+        if (response != null) ctx.writeAndFlush(response);
     }
 
     @Override
@@ -55,8 +53,8 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.debug("Server channel inactive: remote client {} disconnect ", ctx.channel().remoteAddress());
-        ServerMessageOperator.getInstance().moveSentMessageIntoOffline(context.Channel);
-        OnlineChannelManager.getInstance().removeChannel(context.Channel);
+        ServerMessageOperator.getInstance().moveSentMessageIntoOffline(ctx.channel());
+        OnlineChannelManager.getInstance().removeChannel(ctx.channel());
     }
 
     @Override

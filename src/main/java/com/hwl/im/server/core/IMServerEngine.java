@@ -1,8 +1,7 @@
 package com.hwl.im.server.core;
 
 import com.hwl.im.core.ImCoreConfig;
-import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.core.imstore.OfflineMessageManage;
+import com.hwl.im.server.extra.IRequestValidator;
 import com.hwl.imcore.improto.ImMessageContext;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,8 +42,7 @@ public class IMServerEngine {
         init();
     }
 
-    public void setRequestValidator(IRequestValidator requestValidator)
-    {
+    public void setRequestValidator(IRequestValidator requestValidator) {
         this.requestValidator = requestValidator;
     }
 
@@ -64,7 +62,7 @@ public class IMServerEngine {
                 pipeline.addLast(new ProtobufDecoder(ImMessageContext.getDefaultInstance()));
                 pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
                 pipeline.addLast(new ProtobufEncoder());
-				
+
                 pipeline.addLast(new ServerMessageChannelHandler(requestValidator));
             }
         });

@@ -1,6 +1,8 @@
 package com.hwl.im.server.extra;
 
-import java.util.function.Consumer;
+import com.hwl.imcore.improto.ImMessageContext;
+
+import java.util.List;
 
 public interface IOfflineMessageStorage {
     void addFirst(long userid, ImMessageContext messageContext);

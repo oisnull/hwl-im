@@ -1,16 +1,13 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
-import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.core.imstore.OfflineMessageManage;
+import com.hwl.im.server.action.ServerMessageOperator;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
+import com.hwl.im.server.redis.store.GroupStore;
 import com.hwl.imcore.improto.ImChatGroupMessageContent;
 import com.hwl.imcore.improto.ImChatGroupMessageRequest;
 import com.hwl.imcore.improto.ImChatGroupMessageResponse;
 import com.hwl.imcore.improto.ImMessageContext;
-import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
-import com.hwl.im.server.redis.GroupStorage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,11 +21,6 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceiveExecu
 
     public ChatGroupMessageReceiveExecutor(ImChatGroupMessageRequest imChatGroupMessageRequest) {
         super(imChatGroupMessageRequest);
-    }
-
-    @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.ChatGroup;
     }
 
     @Override
@@ -55,7 +47,7 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceiveExecu
         // check user list is online
         // online user then send msg
         // offline user then set msg
-        List<Long> userIds = GroupStorage.getGroupUsers(groupMessageContent.getToGroupGuid());
+        List<Long> userIds = GroupStore.getGroupUsers(groupMessageContent.getToGroupGuid());
         if (userIds == null || userIds.size() <= 0)
             return;
 
@@ -63,13 +55,7 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceiveExecu
         userIds.remove(groupMessageContent.getFromUserId());
 
         for (Long userid : userIds) {
-             MessageOperate.serverPushOnline(userid, messageContext, (succ) -> {
-                if (succ) {
-                    log.debug("Server push chat group message success : {}", messageContext.toString());
-                } else {
-                    log.error("Server push chat group message failed : {}", messageContext.toString());
-                }
-            });
+            ServerMessageOperator.getInstance().push(userid, messageContext, false);
         }
     }
 

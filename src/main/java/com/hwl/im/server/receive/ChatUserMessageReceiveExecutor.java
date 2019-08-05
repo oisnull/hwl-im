@@ -1,11 +1,10 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
+import com.hwl.im.server.action.ServerMessageOperator;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
 import com.hwl.imcore.improto.ImChatUserMessageRequest;
 import com.hwl.imcore.improto.ImChatUserMessageResponse;
 import com.hwl.imcore.improto.ImMessageContext;
-import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
 import org.apache.logging.log4j.LogManager;
@@ -45,17 +44,6 @@ public class ChatUserMessageReceiveExecutor extends AbstractMessageReceiveExecut
         // if online and sent info
         // else store the message into memory
         Long userid = request.getChatUserMessageContent().getToUserId();
-        MessageOperate.serverPushOnline(userid, messageContext, (succ) -> {
-            if (succ) {
-                log.debug("Server push chat user({}) message success : {}", userid, messageContext.toString());
-            } else {
-                log.error("Server push chat user({}) message failed : {}", userid, messageContext.toString());
-            }
-        });
-    }
-
-    @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.ChatUser;
+        ServerMessageOperator.getInstance().push(userid, messageContext, false);
     }
 }

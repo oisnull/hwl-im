@@ -1,5 +1,7 @@
 package com.hwl.im.server.redis.store;
 
+import com.hwl.im.server.redis.RedisUtil;
+
 public class TokenStore {
     public static String getUserToken(long userId) {
         if (userId <= 0)

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.hwl.im.server.extra.IOfflineMessageStorage;
+import com.hwl.im.server.redis.RedisUtil;
 import com.hwl.imcore.improto.ImMessageContext;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +20,11 @@ public class OfflineMessageStore implements IOfflineMessageStorage {
     }
 
     @Override
+    public void addFirst(long userid, ImMessageContext messageContext) {
+
+    }
+
+    @Override
     public void addMessage(long userid, ImMessageContext messageContext) {
         if (userid <= 0 || messageContext == null)
             return;
@@ -30,7 +36,7 @@ public class OfflineMessageStore implements IOfflineMessageStorage {
     }
 
     @Override
-    public void addMessages(long userid, LinkedList<ImMessageContext> messageContexts) {
+    public void addMessages(long userid, List<ImMessageContext> messageContexts) {
         if (userid <= 0 || messageContexts == null || messageContexts.size() <= 0)
             return;
 

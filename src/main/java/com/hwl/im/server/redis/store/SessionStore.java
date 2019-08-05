@@ -2,6 +2,7 @@ package com.hwl.im.server.redis.store;
 
 import com.hwl.im.server.extra.IOnlineSessionStorage;
 
+import com.hwl.im.server.redis.RedisUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +15,7 @@ public class SessionStore implements IOnlineSessionStorage {
     static Logger log = LogManager.getLogger(SessionStore.class.getName());
 
     @Override
-    public String getSession(Long userid) {
+    public String getSession(long userid) {
         if (userid <= 0)
             return null;
 
@@ -30,7 +31,7 @@ public class SessionStore implements IOnlineSessionStorage {
     }
 
     @Override
-    public void setSession(Long userid, String sessionid, Consumer<Boolean> operateCallback) {
+    public void setSession(long userid, String sessionid, Consumer<Boolean> operateCallback) {
         if (userid <= 0)
             return;
         if (sessionid == null || sessionid.isEmpty())

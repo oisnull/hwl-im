@@ -1,15 +1,17 @@
 package com.hwl.im.server.action;
 
-public class PushModel {
-	public final static int STAUTS_NOTRUN=0;
-	public final static int STAUTS_RUNNING=1;
-	public final static int STAUTS_COMPLETE=2;
-	public final static int STAUTS_ERROR=3;
+import java.util.Date;
 
-	private int status;
-	private Date startExecTime;
-	private Date endExecTime;
-	private int messageCount;
+public class PushModel {
+    public final static int STAUTS_NOTRUN = 0;
+    public final static int STAUTS_RUNNING = 1;
+    public final static int STAUTS_COMPLETE = 2;
+    public final static int STAUTS_ERROR = 3;
+
+    private int status;
+    private Date startExecTime;
+    private Date endExecTime;
+    private int messageCount;
 
     public int getStatus() {
         return status;

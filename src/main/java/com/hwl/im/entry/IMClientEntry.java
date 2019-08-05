@@ -13,7 +13,6 @@ import com.hwl.im.client.listen.ChatGroupMessageListen;
 import com.hwl.im.client.listen.ChatUserMessageListen;
 import com.hwl.im.client.listen.UserValidateListen;
 import com.hwl.im.client.send.*;
-import com.hwl.im.core.immode.MessageRequestHeadOperate;
 import com.hwl.imcore.improto.ImMessageType;
 
 import org.apache.logging.log4j.LogManager;
@@ -82,7 +81,7 @@ public class IMClientEntry {
 		messageOperate.setClientAckCallback(messageId -> messageOperate.send(new ClientAckMessageSend(userId,messageId)));
 		
         messageOperate.send(new UserValidateSend(userId, userToken), new UserValidateListen((sessionid) -> {
-            MessageRequestHeadOperate.setSessionid(sessionid);
+//            MessageRequestHeadOperate.setSessionid(sessionid);
             IMClientHeartbeatTimer.getInstance().run(new TimerTask() {
                 @Override
                 public void run() {

@@ -3,6 +3,7 @@ package com.hwl.im.server.action;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import com.hwl.im.server.extra.IOnlineSessionStorage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,28 +16,26 @@ public class OnlineChannelManager {
     public final static AttributeKey<String> USER_SESSION_IDENTITY_ATTR = AttributeKey.valueOf(USER_SESSION_IDENTITY);
 
     private final static ConcurrentHashMap<String, Channel> onlineChannels = new ConcurrentHashMap<String, Channel>();
-    private static OnlineManage instance = new OnlineManage();
-    private static Logger log = LogManager.getLogger(OnlineManage.class.getName());
+    private static OnlineChannelManager instance = new OnlineChannelManager();
+    private static Logger log = LogManager.getLogger(OnlineChannelManager.class.getName());
 
     private boolean isDeugger = true;
     private IOnlineSessionStorage sessionManager = null;
 
-    private OnlineManage() {
+    private OnlineChannelManager() {
     }
 
-    public static OnlineManage getInstance() {
+    public static OnlineChannelManager getInstance() {
         if (instance == null)
-            instance = new OnlineManage();
+            instance = new OnlineChannelManager();
 
         return instance;
     }
 
-    public static void setSessionStorage(IOnlineSessionStorage sessionStorage)
-    {
-        instance._sessionManager = sessionStorage;
-        if (sessionStorage == null)
-        {
-            throw new ArgumentNullException("sessionStorage");
+    public static void setSessionStorage(IOnlineSessionStorage sessionStorage) {
+        instance.sessionManager = sessionStorage;
+        if (sessionStorage == null) {
+            throw new NullPointerException("The param of sessionStorage is empty.");
         }
     }
 

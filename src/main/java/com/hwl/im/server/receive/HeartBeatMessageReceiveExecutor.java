@@ -1,9 +1,8 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.imom.OnlineManage;
+import com.hwl.im.server.action.OnlineChannelManager;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
 import com.hwl.imcore.improto.ImHeartBeatMessageRequest;
-import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,13 +17,8 @@ public class HeartBeatMessageReceiveExecutor extends AbstractMessageReceiveExecu
     }
 
     @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.HeartBeat;
-    }
-
-    @Override
     public void executeCore(Builder response) {
-        if (!OnlineManage.getInstance().isOnline(requestHead.getSessionid())) {
+        if (!OnlineChannelManager.getInstance().isOnline(requestHead.getSessionid())) {
             log.debug("Server heartbeat : user {} is offline , client will be close!", request.getFromUserId());
             channel.close();
         } else {

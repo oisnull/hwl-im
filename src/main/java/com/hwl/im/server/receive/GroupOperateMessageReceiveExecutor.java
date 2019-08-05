@@ -1,8 +1,8 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
-import com.hwl.im.server.redis.GroupStorage;
+import com.hwl.im.server.action.ServerMessageOperator;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
+import com.hwl.im.server.redis.store.GroupStore;
 import com.hwl.imcore.improto.*;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
 import org.apache.logging.log4j.LogManager;
@@ -17,11 +17,6 @@ public class GroupOperateMessageReceiveExecutor extends AbstractMessageReceiveEx
 
     public GroupOperateMessageReceiveExecutor(ImGroupOperateMessageRequest groupOperateMessageRequest) {
         super(groupOperateMessageRequest);
-    }
-
-    @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.GroupOperate;
     }
 
     @Override
@@ -41,19 +36,13 @@ public class GroupOperateMessageReceiveExecutor extends AbstractMessageReceiveEx
                         .setBuildTime(System.currentTimeMillis()).build());
         ImMessageContext messageContext = super.getMessageContext(response);
 
-        List<Long> userIds = GroupStorage.getGroupUsers(groupOperateMessageContent.getGroupGuid());
+        List<Long> userIds = GroupStore.getGroupUsers(groupOperateMessageContent.getGroupGuid());
         //remove current userid
         userIds.remove(groupOperateMessageContent.getOperateUser().getUserId());
         if (userIds == null || userIds.size() <= 0) return;
 
         for (Long userid : userIds) {
-             MessageOperate.serverPushOnline(userid, messageContext, (succ) -> {
-                if (succ) {
-                    log.debug("Server push group operate message success : {}", messageContext.toString());
-                } else {
-                    log.error("Server push group operate message failed : {}", messageContext.toString());
-                }
-            });
+            ServerMessageOperator.getInstance().push(userid, messageContext, false);
         }
     }
 

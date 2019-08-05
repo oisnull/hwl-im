@@ -16,7 +16,6 @@ import com.hwl.im.client.listen.ChatUserMessageListen;
 import com.hwl.im.client.listen.UserValidateListen;
 import com.hwl.im.client.send.HeartBeatMessageSend;
 import com.hwl.im.client.send.UserValidateSend;
-import com.hwl.im.core.immode.MessageRequestHeadOperate;
 import com.hwl.imcore.improto.ImMessageType;
 
 import org.apache.logging.log4j.LogManager;
@@ -123,13 +122,13 @@ public class IMClientAndroidEntry {
     }
 
     private static void startHeartbeat(String sessionId) {
-        MessageRequestHeadOperate.setSessionid(sessionId);
-        IMClientHeartbeatTimer.getInstance().run(new TimerTask() {
-            @Override
-            public void run() {
-                messageOperate.send(new HeartBeatMessageSend());
-            }
-        });
+//        MessageRequestHeadOperate.setSessionid(sessionId);
+//        IMClientHeartbeatTimer.getInstance().run(new TimerTask() {
+//            @Override
+//            public void run() {
+//                messageOperate.send(new HeartBeatMessageSend());
+//            }
+//        });
     }
 
     private static void stopHeartbeat() {

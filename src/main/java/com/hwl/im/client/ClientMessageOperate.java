@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 
 import com.hwl.im.core.imaction.MessageListenExecutor;
 import com.hwl.im.core.imaction.MessageSendExecutor;
-import com.hwl.im.core.immode.MessageOperate;
 import com.hwl.im.core.immode.MessageResponseHeadOperate;
 import com.hwl.imcore.improto.ImMessageContext;
 import com.hwl.imcore.improto.ImMessageType;
@@ -56,7 +55,7 @@ public final class ClientMessageOperate {
 
     public void send(MessageSendExecutor sendExecutor) {
         check();
-        MessageOperate.clientSend(serverChannel, sendExecutor);
+//        MessageOperate.clientSend(serverChannel, sendExecutor);
     }
 
     public void send(MessageSendExecutor sendExecutor, MessageListenExecutor listenExecutor) {

@@ -5,15 +5,14 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.hwl.im.core.imaction.MessageReceiveExecutor;
-import com.hwl.imcore.improto.ImMessageContext;
 import com.hwl.imcore.improto.ImMessageRequest;
 import com.hwl.imcore.improto.ImMessageType;
 
 public class ServerMessageExecuteFactory {
-    private static Map<ImMessageType, Function<ImMessageRequest, MessageReceiveExecutor>> receiveExecutors = new HashMap<>();
+    private static Map<ImMessageType, Function<ImMessageRequest, ServerMessageReceiveExecutor>> receiveExecutors = new HashMap<>();
 
     public static void registerReceiveExecutor(ImMessageType messageType,
-            Function<ImMessageRequest, MessageReceiveExecutor> executorFunction) {
+                                               Function<ImMessageRequest, ServerMessageReceiveExecutor> executorFunction) {
         if (receiveExecutors.containsKey(messageType)) {
             receiveExecutors.remove(messageType);
         }
@@ -26,11 +25,11 @@ public class ServerMessageExecuteFactory {
         }
     }
 
-    public static MessageReceiveExecutor create(ImMessageType messageType,ImMessageRequest request) {
+    public static ServerMessageReceiveExecutor create(ImMessageType messageType, ImMessageRequest request) {
         if (request == null || receiveExecutors.size() <= 0)
             return null;
 
-        Function<ImMessageRequest, MessageReceiveExecutor> executorFunction = receiveExecutors.get(messageType);
+        Function<ImMessageRequest, ServerMessageReceiveExecutor> executorFunction = receiveExecutors.get(messageType);
         if (executorFunction == null)
             return null;
 
