@@ -57,7 +57,7 @@ public class IMServerEngine {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast(new IdleStateHandler(0, 0, ImCoreConfig.IDLE_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+                pipeline.addLast(new IdleStateHandler(0, 0, IMServerConfig.IDLE_TIMEOUT_SECONDS, TimeUnit.SECONDS));
                 pipeline.addLast(new ProtobufVarint32FrameDecoder());
                 pipeline.addLast(new ProtobufDecoder(ImMessageContext.getDefaultInstance()));
                 pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());

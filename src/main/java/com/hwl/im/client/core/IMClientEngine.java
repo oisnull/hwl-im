@@ -1,4 +1,4 @@
-package com.hwl.im.client;
+package com.hwl.im.client.core;
 
 import com.hwl.imcore.improto.ImMessageContext;
 import org.apache.logging.log4j.LogManager;
@@ -17,8 +17,8 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 
-public class IMClientLauncher {
-    static Logger log = LogManager.getLogger(IMClientLauncher.class.getName());
+public class IMClientEngine {
+    static Logger log = LogManager.getLogger(IMClientEngine.class.getName());
 
     public static final int STATUS_DISCONNECT = 0;
     public static final int STATUS_CONNECT = 1;
@@ -30,35 +30,27 @@ public class IMClientLauncher {
     private EventLoopGroup workGroup;
     private Bootstrap bootstrap;
     private Channel channel;
-    private IMClientListener clientListener;
-    private ClientMessageOperate messageOperate;
+    private IClientConnectListener connectListener;
+    private ClientMessageOperator messageOperator;
 
-    public IMClientLauncher(String host, int port) {
+    public IMClientEngine(String host, int port) {
         this.host = host;
         this.port = port;
-        this.clientListener = new DefaultClientListener();
 
         init();
     }
 
-    public void registerClientListener(IMClientListener clientListener) {
-        if (clientListener != null)
-            this.clientListener = clientListener;
+    public void setConnectListener(IClientConnectListener connectListener)
+    {
+        this.connectListener = connectListener;
     }
 
-    public void registerAction(ClientMessageOperate messageOperate) {
-        this.messageOperate = messageOperate;
-    }
-
-    private void registerChannel() {
-        if (this.messageOperate != null) {
-            this.messageOperate.registerChannel(channel);
-            this.messageOperate.registerDisconnectCallback(this::resetStatus);
+    public void setMessageOperator(ClientMessageOperator messageOperator) {
+        this.messageOperator = messageOperator;
+        if (this.messageOperator == null)
+        {
+            throw new NullPointException("ClientMessageOperator");
         }
-    }
-
-    public String getServerAddress() {
-        return String.format("%s:%d", host, port);
     }
 
     private void init() {
@@ -76,7 +68,7 @@ public class IMClientLauncher {
                 pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
                 pipeline.addLast(new ProtobufEncoder());
 
-                pipeline.addLast(new ClientMessageChannelHandler(messageOperate, clientListener));
+                pipeline.addLast(new ClientMessageChannelHandler(messageOperator, connectListener));
             }
         });
     }
@@ -88,14 +80,12 @@ public class IMClientLauncher {
         try {
             status = STATUS_CONNECT;
             channel = bootstrap.connect(host, port).sync().channel();
-            // channelFuture.channel().closeFuture().sync();
-            registerChannel();
-            this.clientListener.onBuildConnectionSuccess(channel.localAddress().toString(),
+            messageOperator.setChannel(channel);
+            this.connectListener.onBuildConnectionSuccess(channel.localAddress().toString(),
                     channel.remoteAddress().toString());
         } catch (InterruptedException e) {
             e.printStackTrace();
-            this.clientListener.onBuildConnectionError(channel.localAddress().toString(),
-                    channel.remoteAddress().toString(), e.getMessage());
+            this.connectListener.onBuildConnectionFailure(channel.localAddress().toString(), e.getMessage());
             status = STATUS_DISCONNECT;
             stop();
         }
@@ -107,7 +97,6 @@ public class IMClientLauncher {
             try {
                 localAddress = channel.localAddress().toString();
                 channel.close().sync();
-                // log.info("Client disconnect {} success...", channel.remoteAddress());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -119,9 +108,7 @@ public class IMClientLauncher {
     }
 
     public boolean isConnected() {
-        if (status == STATUS_CONNECT)
-            return true;
-        return false;
+        return status == STATUS_CONNECT;
     }
 
     public int getStatus() {
@@ -130,34 +117,5 @@ public class IMClientLauncher {
 
     public void resetStatus() {
         status = STATUS_DISCONNECT;
-    }
-
-    private class DefaultClientListener implements IMClientListener {
-
-        @Override
-        public void onBuildConnectionSuccess(String clientAddress, String serverAddress) {
-            log.info("Client {} connected to server {} successfully.", clientAddress, serverAddress);
-        }
-
-        @Override
-        public void onBuildConnectionError(String clientAddress, String serverAddress, String errorInfo) {
-            log.info("Client {} connected to server {} failure. info :", clientAddress, serverAddress, errorInfo);
-        }
-
-        @Override
-        public void onClosed(String clientAddress) {
-            log.info("Client {} closed", clientAddress);
-        }
-
-        @Override
-        public void onDisconnected(String clientAddress) {
-            log.info("Client {} disconnect", clientAddress);
-        }
-
-        @Override
-        public void onError(String clientAddress, String errorInfo) {
-            log.info("An error occurred on the client {}. info : {}", clientAddress, errorInfo);
-        }
-
     }
 }

@@ -11,8 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 public class HeartBeatMessageSend extends AbstractMessageSendExecutor {
 
-    static Logger log = LogManager.getLogger(HeartBeatMessageSend.class.getName());
-
     @Override
     public ImMessageType getMessageType() {
         return ImMessageType.HeartBeat;
@@ -23,9 +21,4 @@ public class HeartBeatMessageSend extends AbstractMessageSendExecutor {
         request.setHeartBeatMessageRequest(
                 ImHeartBeatMessageRequest.newBuilder().setCurrentTime(System.currentTimeMillis()).build());
     }
-
-	@Override
-	public Consumer<Boolean> sendStatusCallback() {
-		return null;
-	}
 }

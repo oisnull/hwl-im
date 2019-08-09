@@ -34,9 +34,4 @@ public class ClientAckMessageSend extends AbstractMessageSendExecutor {
                 .build());
         log.debug("Client send ack message ,userid({}) messageid({})", fromUserId, messageid);
     }
-
-    @Override
-    public Consumer<Boolean> sendStatusCallback() {
-        return null;
-    }
 }

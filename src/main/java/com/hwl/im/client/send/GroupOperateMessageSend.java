@@ -50,11 +50,6 @@ public class GroupOperateMessageSend extends AbstractMessageSendExecutor {
     }
 
     @Override
-    public Consumer<Boolean> sendStatusCallback() {
-        return null;
-    }
-
-    @Override
     public void setRequestBody(ImMessageRequest.Builder request) {
         request.setGroupOperateMessageRequest(
                 ImGroupOperateMessageRequest.newBuilder().setGroupOperateMessageContent

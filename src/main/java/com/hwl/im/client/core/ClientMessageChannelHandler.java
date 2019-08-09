@@ -1,4 +1,4 @@
-package com.hwl.im.client;
+package com.hwl.im.client.core;
 
 import com.hwl.imcore.improto.ImMessageContext;
 
@@ -7,18 +7,12 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 public class ClientMessageChannelHandler extends SimpleChannelInboundHandler<ImMessageContext> {
 
-    // static boolean isDebug = false;
-    // private static Logger log =
-    // LogManager.getLogger(ClientMessageChannelHandler.class.getName());
     private ClientMessageOperate messageOperate;
-    private IMClientListener clientListener;
+    private IClientChannelListener channelListener;
 
-    public ClientMessageChannelHandler(ClientMessageOperate messageOperate, IMClientListener clientListener) {
+    public ClientMessageChannelHandler(ClientMessageOperate messageOperate, IClientChannelListener channelListener) {
         this.messageOperate = messageOperate;
-        this.clientListener = clientListener;
-        if (this.messageOperate == null) {
-            throw new NullPointerException("ClientMessageOperate");
-        }
+        this.channelListener = channelListener;
     }
 
     // @Override
@@ -29,8 +23,7 @@ public class ClientMessageChannelHandler extends SimpleChannelInboundHandler<ImM
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         // log.debug("Client inactive : {}", ctx.channel().remoteAddress());
-        this.clientListener.onDisconnected(ctx.channel().localAddress().toString());
-        this.messageOperate.disconnect();
+        this.channelListener.onDisconnected(ctx.channel().localAddress().toString());
     }
 
     @Override
@@ -39,8 +32,7 @@ public class ClientMessageChannelHandler extends SimpleChannelInboundHandler<ImM
         String clientAddress = ctx.channel().localAddress().toString();
         cause.printStackTrace();
         ctx.close();
-        this.clientListener.onError(clientAddress, cause.getMessage());
-        this.clientListener.onDisconnected(clientAddress);
+        this.channelListener.onError(clientAddress, cause.getMessage());
     }
 
     @Override

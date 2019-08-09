@@ -13,20 +13,12 @@ import com.hwl.imcore.improto.ImUserValidateRequest;
 
 public class UserValidateSend extends AbstractMessageSendExecutor {
 
-    static Logger log = LogManager.getLogger(UserValidateSend.class.getName());
-
-    Long userId = 0L;
+    long userId = 0L;
     String token = "";
-    Consumer<Boolean> sendCallback;
 
-    public UserValidateSend(Long userId, String token) {
+    public UserValidateSend(long userId, String token) {
         this.userId = userId;
         this.token = token;
-    }
-
-    public UserValidateSend(Long userId, String token, Consumer<Boolean> sendCallback) {
-        this(userId, token);
-        this.sendCallback = sendCallback;
     }
 
     @Override
@@ -40,10 +32,4 @@ public class UserValidateSend extends AbstractMessageSendExecutor {
                 .build();
         request.setUserValidateRequest(userValidateRequest);
     }
-
-    @Override
-    public Consumer<Boolean> sendStatusCallback() {
-        return this.sendCallback;
-    }
-
 }

@@ -17,10 +17,10 @@ public class ChatUserMessageSend extends AbstractMessageSendExecutor {
 
     static Logger log = LogManager.getLogger(ChatUserMessageSend.class.getName());
 
-    Long fromUserId, toUserId = 0L;
+    long fromUserId, toUserId = 0L;
     String content = "";
 
-    public ChatUserMessageSend(Long fromUserId, Long toUserId, String content) {
+    public ChatUserMessageSend(long fromUserId, long toUserId, String content) {
         this.fromUserId = fromUserId;
         this.toUserId = toUserId;
         this.content = content;
@@ -33,27 +33,9 @@ public class ChatUserMessageSend extends AbstractMessageSendExecutor {
 
     @Override
     public void setRequestBody(Builder request) {
-
-        this.checkParams();
-
         ImChatUserMessageContent messageContent = ImChatUserMessageContent.newBuilder().setFromUserId(fromUserId)
                 .setToUserId(toUserId).setContent(content).build();
         request.setChatUserMessageRequest(
                 ImChatUserMessageRequest.newBuilder().setChatUserMessageContent(messageContent).build());
     }
-
-    private void checkParams() {
-        if (fromUserId <= 0 || toUserId <= 0 || fromUserId == toUserId) {
-            throw new InvalidParameterException("FromUserId cannot be the same as toUserId or is zero");
-        }
-        if (content == null || content.isEmpty()) {
-            throw new NullPointerException("Send chat user message content cannot be null or empty");
-        }
-    }
-
-	@Override
-	public Consumer<Boolean> sendStatusCallback() {
-		return null;
-	}
-
 }

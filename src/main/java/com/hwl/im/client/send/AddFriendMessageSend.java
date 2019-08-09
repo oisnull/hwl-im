@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 public class AddFriendMessageSend extends AbstractMessageSendExecutor {
 
     ImAddFriendMessageContent messageContent;
-    Consumer<Boolean> sendCallback;
 
     public AddFriendMessageSend(Long fromUserId, String fromUserName, String fromUserImage, Long toUserId, String content) {
         messageContent = ImAddFriendMessageContent.newBuilder()
@@ -21,12 +20,6 @@ public class AddFriendMessageSend extends AbstractMessageSendExecutor {
                 .setToUserId(toUserId)
                 .setContent(content)
                 .build();
-//        this.sendCallback = sendCallback;
-    }
-
-    @Override
-    public Consumer<Boolean> sendStatusCallback() {
-        return sendCallback;
     }
 
     @Override
