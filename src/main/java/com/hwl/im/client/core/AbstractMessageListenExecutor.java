@@ -5,32 +5,31 @@ import com.hwl.imcore.improto.ImMessageResponse;
 import com.hwl.imcore.improto.ImMessageResponseCode;
 import com.hwl.imcore.improto.ImMessageResponseHead;
 import com.hwl.imcore.improto.ImMessageType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public abstract class AbstractMessageListenExecutor<TResponse> implements IClientMessageListenExecutor {
     static Logger log = LogManager.getLogger(AbstractMessageListenExecutor.class.getName());
 
     private ImMessageResponseHead responseHead = null;
-	private TResponse responseBody = null;
+    private TResponse responseBody = null;
 
     @Override
     public final void execute(ImMessageContext messageContext) {
         responseHead = messageContext.getResponse().getResponseHead();
-        responseBody =  = this.getResponse(messageContext.getResponse());
+        responseBody = this.getResponse(messageContext.getResponse());
 
-		if(this.checkResponse()) {
+        if (this.checkResponse()) {
             this.executeCore(messageContext.getType(), responseBody);
         }
     }
 
-    private bool checkResponse() {
-        bool flag = false;
-        if (responseHead == null || responseBody == null)
+    private boolean checkResponse() {
+        boolean flag = false;
+        if (responseHead == null || responseBody == null) {
             failure(0, "The response head or body in ImMessageContext is empty.");
-        }
-        else
-        {
-            switch (responseHead.Code)
-            {
+        } else {
+            switch (responseHead.getCode()) {
                 case ImMessageResponseCode.Success_VALUE:
                     success(responseBody);
                     flag = true;
@@ -40,7 +39,7 @@ public abstract class AbstractMessageListenExecutor<TResponse> implements IClien
                     break;
                 case ImMessageResponseCode.Failed_VALUE:
                 default:
-					failure(responseHead.getCode(), responseHead.getMessage());
+                    failure(responseHead.getCode(), responseHead.getMessage());
                     break;
             }
         }

@@ -1,13 +1,7 @@
 package com.hwl.im.client.send;
 
+import com.hwl.im.client.core.AbstractMessageSendExecutor;
 import com.hwl.imcore.improto.ImMessageRequest.Builder;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.function.Consumer;
-
-import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
 import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.imcore.improto.ImUserValidateRequest;
 

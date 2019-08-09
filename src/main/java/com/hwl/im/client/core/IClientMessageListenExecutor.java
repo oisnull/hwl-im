@@ -1,4 +1,4 @@
-package com.hwl.im.core.imaction;
+package com.hwl.im.client.core;
 
 import com.hwl.imcore.improto.ImMessageContext;
 

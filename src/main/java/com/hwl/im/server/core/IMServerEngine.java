@@ -1,6 +1,6 @@
 package com.hwl.im.server.core;
 
-import com.hwl.im.core.ImCoreConfig;
+import com.hwl.im.server.IMServerConfig;
 import com.hwl.im.server.extra.IRequestValidator;
 import com.hwl.imcore.improto.ImMessageContext;
 

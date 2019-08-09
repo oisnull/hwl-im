@@ -1,6 +1,6 @@
 package com.hwl.im.client.send;
 
-import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
+import com.hwl.im.client.core.AbstractMessageSendExecutor;
 import com.hwl.imcore.improto.ImAddFriendMessageContent;
 import com.hwl.imcore.improto.ImAddFriendMessageRequest;
 import com.hwl.imcore.improto.ImMessageRequest;

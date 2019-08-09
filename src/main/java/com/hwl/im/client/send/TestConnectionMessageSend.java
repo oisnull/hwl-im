@@ -1,11 +1,9 @@
 package com.hwl.im.client.send;
 
-import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
+import com.hwl.im.client.core.AbstractMessageSendExecutor;
 import com.hwl.imcore.improto.ImMessageRequest;
 import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.imcore.improto.ImTestConnectionMessageRequest;
-
-import java.util.function.Consumer;
 
 public class TestConnectionMessageSend extends AbstractMessageSendExecutor {
     long userId;

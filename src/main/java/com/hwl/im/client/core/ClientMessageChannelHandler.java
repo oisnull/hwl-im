@@ -1,5 +1,6 @@
 package com.hwl.im.client.core;
 
+import com.hwl.im.client.extra.IClientChannelListener;
 import com.hwl.imcore.improto.ImMessageContext;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -7,10 +8,10 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 public class ClientMessageChannelHandler extends SimpleChannelInboundHandler<ImMessageContext> {
 
-    private ClientMessageOperate messageOperate;
+    private ClientMessageOperator messageOperate;
     private IClientChannelListener channelListener;
 
-    public ClientMessageChannelHandler(ClientMessageOperate messageOperate, IClientChannelListener channelListener) {
+    public ClientMessageChannelHandler(ClientMessageOperator messageOperate, IClientChannelListener channelListener) {
         this.messageOperate = messageOperate;
         this.channelListener = channelListener;
     }

@@ -1,23 +1,34 @@
 package com.hwl.im.client.core;
 
+import com.hwl.imcore.improto.ImMessageRequestHead;
+
 public class MessageRequestHeadManager {
-    private final static ImMessageRequestHead requestHead = new ImMessageRequestHead();
+    private static ImMessageRequestHead requestHead = null;
 
-	static{
-        requestHead.Client = "",
-        requestHead.Language = "ch-cn",
-        requestHead.Sessionid = "",
-        requestHead.Timestamp = 0,
-        requestHead.Version = "1.0.0",
-	}
+    private static void init() {
+        if (requestHead == null) {
+            requestHead = ImMessageRequestHead.newBuilder()
+                    .setClient("")
+                    .setSessionid("")
+                    .setLanguage("ch-cn")
+                    .setTimestamp(0)
+                    .setVersion("1.0.0")
+                    .build();
+        }
+    }
 
-    public static ImMessageRequestHead getRequestHead()
-    {
+    public static ImMessageRequestHead getRequestHead() {
+        init();
         return requestHead;
     }
 
-    public static void setSessionId(string sessionId)
-    {
-        requestHead.Sessionid = sessionId;
+    public static void setSessionId(String sessionId) {
+        requestHead = ImMessageRequestHead.newBuilder()
+                .setClient("")
+                .setSessionid(sessionId)
+                .setLanguage("ch-cn")
+                .setTimestamp(0)
+                .setVersion("1.0.0")
+                .build();
     }
 }
