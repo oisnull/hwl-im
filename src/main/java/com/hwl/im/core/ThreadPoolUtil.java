@@ -41,6 +41,6 @@ public final class ThreadPoolUtil {
     }
 
     public static void main(String[] args) {
-        ExecutorService executorService = Executors.newFixedThreadPool(ThreadPoolUtil.ioIntesivePoolSize());
+        // ExecutorService executorService = Executors.newFixedThreadPool(ThreadPoolUtil.ioIntesivePoolSize());
     }
 }

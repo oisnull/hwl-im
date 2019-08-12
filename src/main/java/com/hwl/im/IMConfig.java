@@ -7,7 +7,7 @@ public class IMConfig {
     public final static String REDIS_AUTH = "123456";
 
     public final static String ENTRY_DEFAULT_IDENTITY = "imserver";
-    public final static String ENTRY_DEFAULT_HOST = "192.168.1.6";
+    public final static String ENTRY_DEFAULT_HOST = "127.0.0.1";
     public final static String ENTRY_DEFAULT_PORT = "8081";
 
     //release env

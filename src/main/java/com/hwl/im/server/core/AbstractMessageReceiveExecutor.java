@@ -46,37 +46,35 @@ public abstract class AbstractMessageReceiveExecutor<TRequest> implements Server
         this.messageType = messageType;
         this.channel = channel;
 
-        ImMessageResponseHead.Builder responseHead = ImMessageResponseHead.newBuilder().setCode(ImMessageResponseCode.Success_VALUE);
+        ImMessageResponseHead.Builder responseHead = ImMessageResponseHead.newBuilder()
+                .setCode(ImMessageResponseCode.Success_VALUE);
         ImMessageResponse.Builder msgResponse = ImMessageResponse.newBuilder().setResponseHead(responseHead);
 
         try {
             if (isAck()) {
                 String messageId = UUID.randomUUID().toString().replace("-", "");
-                responseHead.setIsack(true).setMessageid(messageId);
+                responseHead.setIsack(true).setMessageid(messageId).build();
             }
             this.checkRequestParams();
             this.executeCore(msgResponse);
             return null;
         } catch (RequestSessionInvalidException e) {
             log.error("Server session invalid exception executor : {}", e.getMessage());
-            responseHead.setCode(ImMessageResponseCode.SessionidInvalid_VALUE)
-                    .setMessage(e.getMessage())
-                    .setIsack(false);
+            responseHead.setCode(ImMessageResponseCode.SessionidInvalid_VALUE).setMessage(e.getMessage())
+                    .setIsack(false).build();
         } catch (Exception e) {
             log.error("Server exception executor : {}", e.getMessage());
-            responseHead.setCode(ImMessageResponseCode.Failed_VALUE)
-                    .setMessage(e.getMessage())
-                    .setIsack(false);
+            responseHead.setCode(ImMessageResponseCode.Failed_VALUE).setMessage(e.getMessage()).setIsack(false).build();
         }
 
         return getMessageContext(msgResponse);
     }
 
-    protected ImMessageContext getMessageContext(ImMessageResponse.Builder response) {
+    public ImMessageContext getMessageContext(ImMessageResponse.Builder response) {
         return ImMessageContext.newBuilder().setResponse(response).setType(messageType).build();
     }
 
-    protected boolean isAck() {
+    public boolean isAck() {
         return false;
     }
 

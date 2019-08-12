@@ -48,7 +48,7 @@ public class ChatSettingMessageReceiveExecutor extends AbstractMessageReceiveExe
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 }

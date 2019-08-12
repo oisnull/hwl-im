@@ -51,7 +51,7 @@ public class NearCircleOperateMessageReceiveExecutor extends AbstractMessageRece
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 }

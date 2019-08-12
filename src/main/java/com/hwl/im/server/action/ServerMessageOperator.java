@@ -62,6 +62,7 @@ public class ServerMessageOperator {
 
     public void push(long toUserId, Channel channel, ImMessageContext messageContext, boolean isOfflineMessage) {
         if (channel == null || messageContext == null) return;
+        log.debug("Server push message content: {}",messageContext.toString());
 
         ChannelFuture channelFuture = channel.writeAndFlush(messageContext);
         channelFuture.addListener(new ChannelFutureListener() {
@@ -69,7 +70,7 @@ public class ServerMessageOperator {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    String successDesc = String.format("Server push to userid({}) success", toUserId);
+                    String successDesc = String.format("Server push to userid(%d) success", toUserId);
                     if (toUserId > 0 && isAck(messageContext)) {
                         successDesc += "," + getMessageId(messageContext);
                         //add temp message container
@@ -79,7 +80,7 @@ public class ServerMessageOperator {
                         log.debug(successDesc);
                 } else {
                     if (toUserId > 0) {
-                        String failedDesc = String.format("Server push to userid({}) failed", toUserId);
+                        String failedDesc = String.format("Server push to userid(%d) failed", toUserId);
                         if (isOfflineMessage) {
                             failedDesc += ",addaddFirst," + getMessageId(messageContext);
                             offlineMessageManager.addFirst(toUserId, messageContext);

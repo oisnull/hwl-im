@@ -60,7 +60,7 @@ public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceiveExecu
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 }

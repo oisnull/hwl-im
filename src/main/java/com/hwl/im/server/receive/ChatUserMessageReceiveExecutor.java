@@ -7,12 +7,7 @@ import com.hwl.imcore.improto.ImChatUserMessageResponse;
 import com.hwl.imcore.improto.ImMessageContext;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class ChatUserMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImChatUserMessageRequest> {
-
-    static Logger log = LogManager.getLogger(ChatUserMessageReceiveExecutor.class.getName());
 
     public ChatUserMessageReceiveExecutor(ImChatUserMessageRequest imChatUserMessageRequest) {
         super(imChatUserMessageRequest);
@@ -28,7 +23,7 @@ public class ChatUserMessageReceiveExecutor extends AbstractMessageReceiveExecut
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 

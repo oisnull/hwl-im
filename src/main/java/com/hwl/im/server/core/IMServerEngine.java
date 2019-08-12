@@ -69,7 +69,7 @@ public class IMServerEngine {
     }
 
     public void bind() throws InterruptedException {
-        log.debug("Server binding {}:{} ...", host, port);
+        log.info("Server binding {}:{} ...", host, port);
         channelFuture = bootstrap.bind(host, port).sync();
         channelFuture.channel().closeFuture().sync();
     }

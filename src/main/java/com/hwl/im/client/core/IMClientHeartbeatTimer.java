@@ -1,4 +1,4 @@
-package com.hwl.im.client;
+package com.hwl.im.client.core;
 
 import com.hwl.im.core.ImCoreConfig;
 

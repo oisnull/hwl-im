@@ -51,7 +51,7 @@ public class CircleOperateMessageReceiveExecutor extends AbstractMessageReceiveE
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 }

@@ -47,7 +47,7 @@ public class AddFriendMessageReceiveExecutor extends AbstractMessageReceiveExecu
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 }

@@ -47,7 +47,7 @@ public class GroupOperateMessageReceiveExecutor extends AbstractMessageReceiveEx
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 }

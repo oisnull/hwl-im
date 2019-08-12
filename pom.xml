@@ -66,7 +66,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.hwl.im.entry.IMEntry</mainClass>
+                            <mainClass>com.hwl.im.IMLauncher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

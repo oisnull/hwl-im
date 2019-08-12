@@ -1,9 +1,8 @@
 package com.hwl.im.client.core;
 
+import com.hwl.im.client.defa.DefaultClientConnectListener;
 import com.hwl.im.client.extra.IClientConnectListener;
 import com.hwl.imcore.improto.ImMessageContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -19,7 +18,7 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 
 public class IMClientEngine {
-//    static Logger log = LogManager.getLogger(IMClientEngine.class.getName());
+    // static Logger log = LogManager.getLogger(IMClientEngine.class.getName());
 
     public static final int STATUS_DISCONNECT = 0;
     public static final int STATUS_CONNECT = 1;
@@ -37,12 +36,14 @@ public class IMClientEngine {
     public IMClientEngine(String host, int port) {
         this.host = host;
         this.port = port;
+        this.connectListener = new DefaultClientConnectListener();
 
         init();
     }
 
     public void setConnectListener(IClientConnectListener connectListener) {
-        this.connectListener = connectListener;
+        if (connectListener != null)
+            this.connectListener = connectListener;
     }
 
     public void setMessageOperator(ClientMessageOperator messageOperator) {
