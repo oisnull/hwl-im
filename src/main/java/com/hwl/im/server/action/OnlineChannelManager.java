@@ -19,7 +19,7 @@ public class OnlineChannelManager {
     private static OnlineChannelManager instance = new OnlineChannelManager();
     private static Logger log = LogManager.getLogger(OnlineChannelManager.class.getName());
 
-    private boolean isDeugger = true;
+    private boolean isDebug = true;
     private IOnlineSessionStorage sessionManager = null;
 
     private OnlineChannelManager() {
@@ -40,7 +40,7 @@ public class OnlineChannelManager {
     }
 
     public void printLog() {
-        if (!isDeugger)
+        if (!isDebug)
             return;
 
         log.debug("Online users : {}", onlineChannels.size());
@@ -76,7 +76,7 @@ public class OnlineChannelManager {
         printLog();
     }
 
-    public String getSession(Long userid) {
+    public String getSession(long userid) {
         if (userid <= 0)
             return null;
         return sessionManager.getSession(userid);
@@ -87,7 +87,7 @@ public class OnlineChannelManager {
         return sessionManager.getUserId(key);
     }
 
-    public boolean isOnline(Long userid) {
+    public boolean isOnline(long userid) {
         if (userid <= 0)
             return false;
 
@@ -107,7 +107,7 @@ public class OnlineChannelManager {
         return uc.isActive();
     }
 
-    public Channel getChannel(Long userid) {
+    public Channel getChannel(long userid) {
         if (userid <= 0)
             return null;
 
@@ -119,7 +119,7 @@ public class OnlineChannelManager {
         return onlineChannels.get(sessid);
     }
 
-    public void setChannelSessionid(Long userid, String sessionid, Channel channel, Consumer<Boolean> operateCallback) {
+    public void setChannelSessionid(long userid, String sessionid, Channel channel, Consumer<Boolean> operateCallback) {
         if (userid <= 0 || sessionid == null || sessionid.isEmpty() || channel == null) {
             log.error("setChannelSessionid : userid = {} , sessionid = {} , channel = {}", userid, sessionid,
                     channel.remoteAddress());
@@ -127,7 +127,7 @@ public class OnlineChannelManager {
         }
 
         channel.attr(USER_SESSION_IDENTITY_ATTR).set(sessionid);
-        sessionManager.setSession(userid, sessionid, operateCallback);
         onlineChannels.put(sessionid, channel);
+        sessionManager.setSession(userid, sessionid, operateCallback);
     }
 }

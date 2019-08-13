@@ -54,17 +54,25 @@ public abstract class AbstractMessageReceiveExecutor<TRequest> implements Server
             if (isAck()) {
                 String messageId = UUID.randomUUID().toString().replace("-", "");
                 responseHead.setIsack(true).setMessageid(messageId).build();
+				msgResponse.setResponseHead(responseHead);
             }
             this.checkRequestParams();
             this.executeCore(msgResponse);
             return null;
         } catch (RequestSessionInvalidException e) {
             log.error("Server session invalid exception executor : {}", e.getMessage());
-            responseHead.setCode(ImMessageResponseCode.SessionidInvalid_VALUE).setMessage(e.getMessage())
-                    .setIsack(false).build();
+            responseHead.setCode(ImMessageResponseCode.SessionidInvalid_VALUE)
+						.setMessage(e.getMessage())
+						.setIsack(false)
+						.build();
+			msgResponse.setResponseHead(responseHead);
         } catch (Exception e) {
             log.error("Server exception executor : {}", e.getMessage());
-            responseHead.setCode(ImMessageResponseCode.Failed_VALUE).setMessage(e.getMessage()).setIsack(false).build();
+            responseHead.setCode(ImMessageResponseCode.Failed_VALUE)
+						.setMessage(e.getMessage())
+						.setIsack(false)
+						.build();
+			msgResponse.setResponseHead(responseHead);
         }
 
         return getMessageContext(msgResponse);

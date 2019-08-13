@@ -16,7 +16,8 @@ import java.util.concurrent.Executors;
 public class ServerMessageOperator {
 
     private final static Logger log = LogManager.getLogger(ServerMessageOperator.class.getName());
-    private final static ExecutorService executorService = Executors.newFixedThreadPool(ThreadPoolUtil.ioIntesivePoolSize());
+    private final static ExecutorService executorService = Executors
+            .newFixedThreadPool(ThreadPoolUtil.ioIntesivePoolSize());
     private static ServerMessageOperator instance = new ServerMessageOperator();
 
     private ServerSentMessageManager sentMessageManager;
@@ -43,14 +44,16 @@ public class ServerMessageOperator {
     }
 
     public static boolean isAck(ImMessageContext messageContext) {
-        if (messageContext != null && messageContext.getResponse() != null && messageContext.getResponse().getResponseHead() != null) {
+        if (messageContext != null && messageContext.getResponse() != null
+                && messageContext.getResponse().getResponseHead() != null) {
             return messageContext.getResponse().getResponseHead().getIsack();
         }
         return false;
     }
 
     public static String getMessageId(ImMessageContext messageContext) {
-        if (messageContext != null && messageContext.getResponse() != null && messageContext.getResponse().getResponseHead() != null) {
+        if (messageContext != null && messageContext.getResponse() != null
+                && messageContext.getResponse().getResponseHead() != null) {
             return messageContext.getResponse().getResponseHead().getMessageid();
         }
         return null;
@@ -61,8 +64,11 @@ public class ServerMessageOperator {
     }
 
     public void push(long toUserId, Channel channel, ImMessageContext messageContext, boolean isOfflineMessage) {
-        if (channel == null || messageContext == null) return;
-        log.debug("Server push message content: {}",messageContext.toString());
+        if (channel == null || messageContext == null)
+            return;
+        String logStr = String.format("Server push %s message(%s) to userid(%d) use channel(%s)",
+                isOfflineMessage ? "offline" : "online", getMessageId(messageContext), toUserId,
+                channel.remoteAddress().toString());
 
         ChannelFuture channelFuture = channel.writeAndFlush(messageContext);
         channelFuture.addListener(new ChannelFutureListener() {
@@ -70,27 +76,20 @@ public class ServerMessageOperator {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    String successDesc = String.format("Server push to userid(%d) success", toUserId);
                     if (toUserId > 0 && isAck(messageContext)) {
-                        successDesc += "," + getMessageId(messageContext);
-                        //add temp message container
+                        // add temp message container
                         sentMessageManager.addMessage(toUserId, messageContext);
                     }
-                    if (toUserId > 0)
-                        log.debug(successDesc);
+                    log.info("{} success.", logStr);
                 } else {
                     if (toUserId > 0) {
-                        String failedDesc = String.format("Server push to userid(%d) failed", toUserId);
                         if (isOfflineMessage) {
-                            failedDesc += ",addaddFirst," + getMessageId(messageContext);
                             offlineMessageManager.addFirst(toUserId, messageContext);
                         } else {
-                            failedDesc += ",addMessage," + getMessageId(messageContext);
                             offlineMessageManager.addMessage(toUserId, messageContext);
                         }
-
-                        log.debug(failedDesc);
                     }
+                    log.info("{} failed.", logStr);
                 }
             }
         });
@@ -103,7 +102,8 @@ public class ServerMessageOperator {
 
         Channel toUserChannel = OnlineChannelManager.getInstance().getChannel(toUserId);
         if (toUserChannel == null) {
-            //User is offline
+            // User is offline
+            log.info("Server push: user{0} is offline", toUserId);
             offlineMessageManager.addMessage(toUserId, messageContext);
             return;
         }
@@ -120,7 +120,7 @@ public class ServerMessageOperator {
             return;
         }
 
-        //check exists offline message
+        // check exists offline message
         ImMessageContext messageContext = offlineMessageManager.pollMessage(toUserId);
         if (messageContext == null) {
             return;
@@ -133,30 +133,33 @@ public class ServerMessageOperator {
     }
 
     public void startPush(long userId) {
-        if (pushMonitor.isRunning(userId)) return;
+        if (pushMonitor.isRunning(userId))
+            return;
 
-        log.debug("Server start push to userid({}) ...", userId);
+        log.info("Server push offline message to userid({}) start.", userId);
         pushMonitor.start(userId);
         executorService.execute(() -> {
             loopPushOfflineMessage(userId, null);
             pushMonitor.removeStatus(userId);
-            log.debug("Server push to userid({}) end.", userId);
+            log.info("Server push offline message to userid({}) end.", userId);
         });
     }
 
     public void deleteSentMessage(long userId, String messageGuid) {
-        log.debug("Server delete sent message of userid({}) and messageGuid({}) ...", userId, messageGuid);
+        log.info("Server delete sent message of userid({}) and messageGuid({}) ...", userId, messageGuid);
         sentMessageManager.removeMessage(userId, messageGuid);
     }
 
     public void moveSentMessageIntoOffline(Channel channel) {
         long userId = OnlineChannelManager.getInstance().getUserId(channel);
-        if (userId <= 0) return;
+        if (userId <= 0)
+            return;
 
         List<ImMessageContext> messages = sentMessageManager.getMessages(userId);
-        if (messages == null || messages.size() <= 0) return;
+        if (messages == null || messages.size() <= 0)
+            return;
 
-        log.debug("Server move sent message of userid({}) into offline store.", userId);
+        log.info("Server move sent message of userid({}) into offline store.", userId);
         synchronized (messages) {
             offlineMessageManager.addMessages(userId, messages);
             messages.clear();

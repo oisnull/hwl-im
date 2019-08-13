@@ -38,7 +38,7 @@ public class ChatUserMessageReceiveExecutor extends AbstractMessageReceiveExecut
         // check user is online or not
         // if online and sent info
         // else store the message into memory
-        Long userid = request.getChatUserMessageContent().getToUserId();
+        long userid = request.getChatUserMessageContent().getToUserId();
         ServerMessageOperator.getInstance().push(userid, messageContext, false);
     }
 }

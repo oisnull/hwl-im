@@ -42,9 +42,10 @@ public class IMClient {
         if (im.isConnected()) {
             messageOperator.send(new UserValidateSend(userId, userToken), new UserValidateListen((sess) -> {
                 sendCommandDesc();
-                sendChatMessage(messageOperator);
                 // messageOperator.send(new HeartBeatMessageSend());
             }));
+
+            sendChatMessage(messageOperator);
         }
     }
 
