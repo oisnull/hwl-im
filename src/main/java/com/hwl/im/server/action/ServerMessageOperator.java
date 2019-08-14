@@ -1,6 +1,6 @@
 package com.hwl.im.server.action;
 
-import com.hwl.im.core.ThreadPoolUtil;
+import com.hwl.im.server.ThreadPoolUtil;
 import com.hwl.im.server.extra.IOfflineMessageStorage;
 import com.hwl.imcore.improto.ImMessageContext;
 import io.netty.channel.Channel;
@@ -43,22 +43,6 @@ public class ServerMessageOperator {
         }
     }
 
-    public static boolean isAck(ImMessageContext messageContext) {
-        if (messageContext != null && messageContext.getResponse() != null
-                && messageContext.getResponse().getResponseHead() != null) {
-            return messageContext.getResponse().getResponseHead().getIsack();
-        }
-        return false;
-    }
-
-    public static String getMessageId(ImMessageContext messageContext) {
-        if (messageContext != null && messageContext.getResponse() != null
-                && messageContext.getResponse().getResponseHead() != null) {
-            return messageContext.getResponse().getResponseHead().getMessageid();
-        }
-        return null;
-    }
-
     public void push(Channel channel, ImMessageContext messageContext) {
         push(0, channel, messageContext, false);
     }
@@ -66,17 +50,18 @@ public class ServerMessageOperator {
     public void push(long toUserId, Channel channel, ImMessageContext messageContext, boolean isOfflineMessage) {
         if (channel == null || messageContext == null)
             return;
-        String logStr = String.format("Server push %s message(%s) to userid(%d) use channel(%s)",
-                isOfflineMessage ? "offline" : "online", getMessageId(messageContext), toUserId,
-                channel.remoteAddress().toString());
 
         ChannelFuture channelFuture = channel.writeAndFlush(messageContext);
         channelFuture.addListener(new ChannelFutureListener() {
 
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
+                String logStr = String.format("Server push %s message(%s) to userid(%d) use channel(%s)",
+                        isOfflineMessage ? "offline" : "online", ImMessageContextParser.getMessageId(messageContext),
+                        toUserId, channel.remoteAddress().toString());
+
                 if (future.isSuccess()) {
-                    if (toUserId > 0 && isAck(messageContext)) {
+                    if (toUserId > 0 && ImMessageContextParser.isAck(messageContext)) {
                         // add temp message container
                         sentMessageManager.addMessage(toUserId, messageContext);
                     }
@@ -103,8 +88,11 @@ public class ServerMessageOperator {
         Channel toUserChannel = OnlineChannelManager.getInstance().getChannel(toUserId);
         if (toUserChannel == null) {
             // User is offline
-            log.info("Server push: user{0} is offline", toUserId);
-            offlineMessageManager.addMessage(toUserId, messageContext);
+            if (isOfflineMessage)
+                offlineMessageManager.addFirst(toUserId, messageContext);
+            else
+                offlineMessageManager.addMessage(toUserId, messageContext);
+
             return;
         }
 
@@ -146,7 +134,6 @@ public class ServerMessageOperator {
     }
 
     public void deleteSentMessage(long userId, String messageGuid) {
-        log.info("Server delete sent message of userid({}) and messageGuid({}) ...", userId, messageGuid);
         sentMessageManager.removeMessage(userId, messageGuid);
     }
 

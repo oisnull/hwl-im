@@ -1,7 +1,4 @@
-package com.hwl.im.core;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+package com.hwl.im.server;
 
 public final class ThreadPoolUtil {
 

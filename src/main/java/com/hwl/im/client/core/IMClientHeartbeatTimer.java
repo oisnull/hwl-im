@@ -1,6 +1,6 @@
 package com.hwl.im.client.core;
 
-import com.hwl.im.core.ImCoreConfig;
+import com.hwl.im.client.IMClientConfig;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,7 +20,7 @@ public class IMClientHeartbeatTimer {
     }
 
     public void run(TimerTask task) {
-        long internal = (ImCoreConfig.IDLE_TIMEOUT_SECONDS - 2) * 1000;
+        long internal = (IMClientConfig.IDLE_TIMEOUT_SECONDS - 2) * 1000;
         timer.schedule(task, internal, internal);
     }
 

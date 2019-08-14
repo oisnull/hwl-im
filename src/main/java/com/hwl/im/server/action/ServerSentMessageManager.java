@@ -13,6 +13,7 @@ import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 
 public class ServerSentMessageManager extends DefaultOfflineMessageManager {
+    static Logger log = LogManager.getLogger(ServerSentMessageManager.class.getName());
 
     public final static int MAX_MESSAGE_COUNT = 10;
 
@@ -20,37 +21,37 @@ public class ServerSentMessageManager extends DefaultOfflineMessageManager {
         super(sourceType);
     }
 
-    public boolean isSpilled(long userId) {
-        return getMessageCount(userId) >= MAX_MESSAGE_COUNT;
+    public boolean isSpilled(long userid) {
+        return getMessageCount(userid) >= MAX_MESSAGE_COUNT;
     }
 
-    public int getMessageCount(long userId) {
-        if (userId <= 0) return MAX_MESSAGE_COUNT;
-
-//        List<ImMessageContext> messages = messageContainer[userId];
-//        if (messages == null) {
-//            return 0;
-//        } else {
-//            return messages.Count;
-//        }
+    public int getMessageCount(long userid) {
+        if (messageContainer.containsKey(userid) && messageContainer.get(userid) != null) {
+            return messageContainer.get(userid).size();
+        }
         return 0;
     }
 
-    public void removeUser(long userId) {
-        if (userId <= 0) return;
+    public void removeUser(long userid) {
+        if (userid <= 0)
+            return;
 
-        //if (getMessageCount(userId) > 0) return;
-
-//        messageContainer.Remove(userId);
+        if (messageContainer.containsKey(userid)) {
+            messageContainer.remove(userid);
+        }
     }
 
-    public void removeMessage(long userId, String messageGuid) {
-//        if (userId <= 0 || string.IsNullOrEmpty(messageGuid))
-//            return;
-//
-//        List<ImMessageContext> messages = messageContainer[userId];
-//        if (messages == null || messages.Count <= 0) return;
-//
-//        messages.RemoveAll(r = > r.Response ?.ResponseHead ?.Messageid == messageGuid);
+    public void removeMessage(long userid, String messageGuid) {
+        if (userid <= 0 || messageGuid == null)
+            return;
+
+        if (!messageContainer.containsKey(userid) || messageContainer.get(userid) == null)
+            return;
+
+        List<ImMessageContext> messages = messageContainer.get(userid);
+        messages.removeIf(r -> messageGuid.equals(ImMessageContextParser.getMessageId(r)));
+
+        log.info("Server delete sent message of userid({}) and message({}),current count is {}", userid, messageGuid,
+                messages.size());
     }
 }
