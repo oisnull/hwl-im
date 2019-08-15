@@ -3,13 +3,16 @@ package com.hwl.im;
 import com.hwl.im.IMConfig;
 import com.hwl.im.client.IMClient;
 import com.hwl.im.server.IMServer;
+import com.hwl.im.server.redis.store.OfflineMessageStore;
 
 public class IMLauncher {
 
     /**
-     * windows : java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imserver 127.0.0.1 8081 
-	 * java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imserver 115.29.179.171 8017 
-	 * java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imclient 127.0.0.1 8081 3 123456
+     * windows : java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imserver
+     * 127.0.0.1 8081 java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar
+     * imserver 115.29.179.171 8017 java -jar
+     * target\hwl-im-1.0.0-jar-with-dependencies.jar imclient 127.0.0.1 8081 3
+     * 123456
      * <p>
      * reset design : core / client / server / entry(console)
      */
@@ -46,6 +49,7 @@ public class IMLauncher {
 
     static void runServer(String host, int port) {
         IMServer server = new IMServer(host, port);
+        server.setOfflineMessageStorage(new OfflineMessageStore());
         server.start();
     }
 

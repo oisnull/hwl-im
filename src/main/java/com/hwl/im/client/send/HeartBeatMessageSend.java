@@ -7,6 +7,12 @@ import com.hwl.imcore.improto.ImMessageType;
 
 public class HeartBeatMessageSend extends AbstractMessageSendExecutor {
 
+    private long userId;
+
+    public HeartBeatMessageSend(long userId) {
+        this.userId = userId;
+    }
+
     @Override
     public ImMessageType getMessageType() {
         return ImMessageType.HeartBeat;
@@ -14,7 +20,7 @@ public class HeartBeatMessageSend extends AbstractMessageSendExecutor {
 
     @Override
     public void setRequestBody(Builder request) {
-        request.setHeartBeatMessageRequest(
-                ImHeartBeatMessageRequest.newBuilder().setCurrentTime(System.currentTimeMillis()).build());
+        request.setHeartBeatMessageRequest(ImHeartBeatMessageRequest.newBuilder().setFromUserId(userId)
+                .setCurrentTime(System.currentTimeMillis()).build());
     }
 }

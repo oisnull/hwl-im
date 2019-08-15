@@ -1,19 +1,14 @@
 package com.hwl.im.server.redis.store;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.hwl.im.server.extra.IOfflineMessageStorage;
 import com.hwl.im.server.redis.RedisUtil;
 import com.hwl.imcore.improto.ImMessageContext;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class OfflineMessageStore implements IOfflineMessageStorage {
-
-    static Logger log = LogManager.getLogger(OfflineMessageStore.class.getName());
 
     private static byte[] getStoreKey(Long userid) {
         return String.format("offlinemsg:%d", userid).getBytes();
@@ -21,7 +16,11 @@ public class OfflineMessageStore implements IOfflineMessageStorage {
 
     @Override
     public void addFirst(long userid, ImMessageContext messageContext) {
+        if (userid <= 0 || messageContext == null)
+            return;
 
+        RedisUtil.exec(RedisUtil.OFFLINE_MESSAGE_DB,
+                client -> client.lpush(getStoreKey(userid), messageContext.toByteArray()));
     }
 
     @Override
@@ -29,10 +28,8 @@ public class OfflineMessageStore implements IOfflineMessageStorage {
         if (userid <= 0 || messageContext == null)
             return;
 
-        log.debug("Server userid({}) is offline and add message to redis", userid);
-
         RedisUtil.exec(RedisUtil.OFFLINE_MESSAGE_DB,
-                client -> client.lpush(getStoreKey(userid), messageContext.toByteArray()));
+                client -> client.rpush(getStoreKey(userid), messageContext.toByteArray()));
     }
 
     @Override
@@ -40,24 +37,31 @@ public class OfflineMessageStore implements IOfflineMessageStorage {
         if (userid <= 0 || messageContexts == null || messageContexts.size() <= 0)
             return;
 
-        List<byte[]> datas = new ArrayList<>();
-        for (int i = 0; i < messageContexts.size(); i++) {
-
-        }
-
-        RedisUtil.exec(RedisUtil.OFFLINE_MESSAGE_DB,
-                client -> {
-                    int msgCount = messageContexts.size() - 1;
-                    for (int i = msgCount; i >= 0; i--) {
-                        client.lpush(getStoreKey(userid), messageContexts.get(i).toByteArray());
-                    }
-                    return null;
-                });
+        RedisUtil.exec(RedisUtil.OFFLINE_MESSAGE_DB, client -> {
+            int msgCount = messageContexts.size() - 1;
+            for (int i = msgCount; i >= 0; i--) {
+                client.rpush(getStoreKey(userid), messageContexts.get(i).toByteArray());
+            }
+            return null;
+        });
     }
 
     @Override
     public List<ImMessageContext> getMessages(long userid) {
-        return null;
+        List<byte[]> messages = RedisUtil.exec(RedisUtil.OFFLINE_MESSAGE_DB,
+                client -> client.lrange(getStoreKey(userid), 0, -1));
+        if (messages == null || messages.size() <= 0)
+            return null;
+
+        List<ImMessageContext> results = new ArrayList<>(messages.size());
+        for (byte[] item : messages) {
+            try {
+                results.add(ImMessageContext.parseFrom(item));
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+        }
+        return results;
     }
 
     @Override
@@ -72,11 +76,9 @@ public class OfflineMessageStore implements IOfflineMessageStorage {
         try {
             return ImMessageContext.parseFrom(bytes);
         } catch (Exception e) {
-            log.error("Server offline message convert failed , userid {}", userid);
             e.printStackTrace();
         }
 
         return null;
     }
-
 }

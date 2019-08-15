@@ -2,9 +2,12 @@ package com.hwl.im.client;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.TimerTask;
 
 import com.hwl.im.client.core.ClientMessageOperator;
 import com.hwl.im.client.core.IMClientEngine;
+import com.hwl.im.client.core.IMClientHeartbeatTimer;
+import com.hwl.im.client.core.MessageRequestHeadManager;
 import com.hwl.im.client.listen.ChatGroupMessageListen;
 import com.hwl.im.client.listen.ChatUserMessageListen;
 import com.hwl.im.client.listen.UserValidateListen;
@@ -12,6 +15,7 @@ import com.hwl.im.client.send.AddFriendMessageSend;
 import com.hwl.im.client.send.ChatGroupMessageSend;
 import com.hwl.im.client.send.ChatUserMessageSend;
 import com.hwl.im.client.send.ClientAckMessageSend;
+import com.hwl.im.client.send.HeartBeatMessageSend;
 import com.hwl.im.client.send.UserValidateSend;
 import com.hwl.imcore.improto.ImMessageType;
 
@@ -41,12 +45,24 @@ public class IMClient {
 
         if (im.isConnected()) {
             messageOperator.send(new UserValidateSend(userId, userToken), new UserValidateListen((sess) -> {
+                MessageRequestHeadManager.setSessionId(sess);
                 sendCommandDesc();
-                // messageOperator.send(new HeartBeatMessageSend());
+                sendHeartbeat(messageOperator);
             }));
 
             sendChatMessage(messageOperator);
+        } else {
+            System.out.println("Client connect failed.");
         }
+    }
+
+    private void sendHeartbeat(ClientMessageOperator messageOperator) {
+        IMClientHeartbeatTimer.getInstance().run(new TimerTask() {
+            @Override
+            public void run() {
+                messageOperator.send(new HeartBeatMessageSend(userId));
+            }
+        });
     }
 
     private void sendChatMessage(ClientMessageOperator messageOperator) {
