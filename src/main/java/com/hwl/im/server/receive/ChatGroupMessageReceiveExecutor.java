@@ -9,14 +9,10 @@ import com.hwl.imcore.improto.ImChatGroupMessageResponse;
 import com.hwl.imcore.improto.ImMessageContext;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.List;
 
 public class ChatGroupMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImChatGroupMessageRequest> {
 
-    static Logger log = LogManager.getLogger(ChatGroupMessageReceiveExecutor.class.getName());
     ImChatGroupMessageContent groupMessageContent = null;
 
     public ChatGroupMessageReceiveExecutor(ImChatGroupMessageRequest imChatGroupMessageRequest) {

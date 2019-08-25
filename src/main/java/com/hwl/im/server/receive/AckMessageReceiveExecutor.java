@@ -12,7 +12,7 @@ public class AckMessageReceiveExecutor extends AbstractMessageReceiveExecutor<Im
     }
 
     @Override
-    public boolean isCheckSessionid() {
+    public boolean isCheckSession() {
         return false;
     }
 

@@ -1,6 +1,5 @@
 package com.hwl.im;
 
-import com.hwl.im.IMConfig;
 import com.hwl.im.client.IMClient;
 import com.hwl.im.server.IMServer;
 import com.hwl.im.server.redis.store.OfflineMessageStore;

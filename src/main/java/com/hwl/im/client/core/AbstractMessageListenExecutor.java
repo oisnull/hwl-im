@@ -34,7 +34,7 @@ public abstract class AbstractMessageListenExecutor<TResponse> implements IClien
                     success(responseBody);
                     flag = true;
                     break;
-                case ImMessageResponseCode.SessionidInvalid_VALUE:
+                case ImMessageResponseCode.SessionInvalid_VALUE:
                     sessionidInvalid();
                     break;
                 case ImMessageResponseCode.Failed_VALUE:

@@ -1,13 +1,10 @@
 package com.hwl.im.server.receive;
 
+import com.hwl.im.server.action.ServerMessageOperator;
 import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
 import com.hwl.imcore.improto.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class TestConnectionMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImTestConnectionMessageRequest> {
-    static Logger log = LogManager.getLogger(TestConnectionMessageReceiveExecutor.class.getName());
-
     public TestConnectionMessageReceiveExecutor(ImTestConnectionMessageRequest imTestConnectionMessageRequest) {
         super(imTestConnectionMessageRequest);
     }
@@ -18,14 +15,8 @@ public class TestConnectionMessageReceiveExecutor extends AbstractMessageReceive
                 .setContent("Hello client-" + request.getFromUserId())
                 .setSendTime(System.currentTimeMillis())
                 .build());
-//        ImMessageContext messageContext = super.getMessageContext(response);
-//
-//        MessageOperate.serverPushOnline(request.getFromUserId(), messageContext, (succ) -> {
-//            if (succ) {
-//                log.debug("Server push test connection message success : {}", messageContext.toString());
-//            } else {
-//                log.error("Server push test connection message failed : {}", messageContext.toString());
-//            }
-//        });
+        ImMessageContext messageContext = super.getMessageContext(response);
+
+        ServerMessageOperator.getInstance().push(request.getFromUserId(), messageContext, false);
     }
 }

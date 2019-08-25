@@ -35,7 +35,7 @@ public abstract class AbstractMessageReceiveExecutor<TRequest> implements Server
         if (this.request == null) {
             throw new NullPointerException("request");
         }
-        if (this.isCheckSessionid() && !requestValidator.isSessionValid(this.requestHead)) {
+        if (this.isCheckSession() && !requestValidator.isSessionValid(this.requestHead)) {
             throw new RequestSessionInvalidException("session id is invalid");
         }
     }
@@ -61,7 +61,7 @@ public abstract class AbstractMessageReceiveExecutor<TRequest> implements Server
             return null;
         } catch (RequestSessionInvalidException e) {
             log.error("Server session invalid exception executor : {}", e.getMessage());
-            responseHead.setCode(ImMessageResponseCode.SessionidInvalid_VALUE)
+            responseHead.setCode(ImMessageResponseCode.SessionInvalid_VALUE)
 						.setMessage(e.getMessage())
 						.setIsack(false)
 						.build();
@@ -86,7 +86,7 @@ public abstract class AbstractMessageReceiveExecutor<TRequest> implements Server
         return false;
     }
 
-    public boolean isCheckSessionid() {
+    public boolean isCheckSession() {
         return true;
     }
 

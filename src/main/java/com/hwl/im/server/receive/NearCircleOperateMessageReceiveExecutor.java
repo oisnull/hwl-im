@@ -3,15 +3,12 @@ package com.hwl.im.server.receive;
 import com.hwl.im.server.action.ServerMessageOperator;
 import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
 import com.hwl.imcore.improto.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NearCircleOperateMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImNearCircleOperateMessageRequest> {
 
-    static Logger log = LogManager.getLogger(NearCircleOperateMessageReceiveExecutor.class.getName());
     ImNearCircleOperateMessageContent operateMessageContent = null;
 
     public NearCircleOperateMessageReceiveExecutor(ImNearCircleOperateMessageRequest operateMessageContent) {

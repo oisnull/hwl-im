@@ -7,7 +7,7 @@ public class MessageRequestHeadManager {
 
     private static void init() {
         if (requestHead == null) {
-            requestHead = ImMessageRequestHead.newBuilder().setClient("").setSessionid("").setLanguage("ch-cn")
+            requestHead = ImMessageRequestHead.newBuilder().setClient("").setSession("").setLanguage("ch-cn")
                     .setTimestamp(0).setVersion("1.0.0").build();
         }
     }
@@ -20,7 +20,7 @@ public class MessageRequestHeadManager {
     public static void setSessionId(String sessionId) {
         if (sessionId == null || sessionId.trim().length() <= 0)
             return;
-        requestHead = ImMessageRequestHead.newBuilder().setClient("").setSessionid(sessionId).setLanguage("ch-cn")
+        requestHead = ImMessageRequestHead.newBuilder().setClient("").setSession(sessionId).setLanguage("ch-cn")
                 .setTimestamp(0).setVersion("1.0.0").build();
     }
 }

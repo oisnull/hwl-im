@@ -177,5 +177,14 @@ public class IMServer {
                     }
 
                 });
+
+        ServerMessageExecuteFactory.registerReceiveExecutor(ImMessageType.SystemMessage,
+                new Function<ImMessageRequest, ServerMessageReceiveExecutor>() {
+                    @Override
+                    public ServerMessageReceiveExecutor apply(ImMessageRequest t) {
+                        return new SystemMessageReceiveExecutor(t.getSystemMessageRequest());
+                    }
+
+                });
     }
 }

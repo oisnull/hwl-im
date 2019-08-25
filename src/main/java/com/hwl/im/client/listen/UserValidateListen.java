@@ -34,7 +34,7 @@ public class UserValidateListen extends AbstractMessageListenExecutor<ImUserVali
 
         if (response.getIsSuccess()) {
             if (this.succCallback != null)
-                this.succCallback.accept(response.getSessionid());
+                this.succCallback.accept(response.getSession());
         } else {
             if (this.failedCallback != null)
                 this.failedCallback.accept(response.getMessage());

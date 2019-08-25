@@ -27,7 +27,7 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<
     }
 
     @Override
-    public boolean isCheckSessionid() {
+    public boolean isCheckSession() {
         return false;
     }
 
@@ -55,11 +55,11 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<
                     public void accept(Boolean succ) {
                         if (succ) {
                             response.setUserValidateResponse(ImUserValidateResponse.newBuilder().setIsSuccess(true)
-                                    .setIsOnline(false).setSessionid(newSessionid).build());
+                                    .setIsOnline(false).setSession(newSessionid).build());
                             ServerMessageOperator.getInstance().startPush(request.getUserId());
                         } else {
                             response.setUserValidateResponse(ImUserValidateResponse.newBuilder().setIsSuccess(false)
-                                    .setMessage("set session failed").setIsOnline(false).setSessionid(newSessionid)
+                                    .setMessage("set session failed").setIsOnline(false).setSession(newSessionid)
                                     .build());
                         }
                         // push result to client
