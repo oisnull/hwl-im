@@ -1,7 +1,7 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
+import com.hwl.im.server.action.ServerMessageOperator;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
 import com.hwl.imcore.improto.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,11 +16,6 @@ public class CircleOperateMessageReceiveExecutor extends AbstractMessageReceiveE
 
     public CircleOperateMessageReceiveExecutor(ImCircleOperateMessageRequest operateMessageContent) {
         super(operateMessageContent);
-    }
-
-    @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.CircleOperate;
     }
 
     @Override
@@ -51,12 +46,12 @@ public class CircleOperateMessageReceiveExecutor extends AbstractMessageReceiveE
 
         if (userIds.size() > 0)
             for (Long userId : userIds) {
-                MessageOperate.serverPushOnline(userId, messageContext, null);
+                ServerMessageOperator.getInstance().push(userId, messageContext, false);
             }
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 }

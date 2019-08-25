@@ -1,7 +1,7 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
+import com.hwl.im.server.action.ServerMessageOperator;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
 import com.hwl.imcore.improto.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,11 +16,6 @@ public class NearCircleOperateMessageReceiveExecutor extends AbstractMessageRece
 
     public NearCircleOperateMessageReceiveExecutor(ImNearCircleOperateMessageRequest operateMessageContent) {
         super(operateMessageContent);
-    }
-
-    @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.NearCircleOperate;
     }
 
     @Override
@@ -51,12 +46,12 @@ public class NearCircleOperateMessageReceiveExecutor extends AbstractMessageRece
 
         if (userIds.size() > 0)
             for (Long userId : userIds) {
-                MessageOperate.serverPushOnline(userId, messageContext, null);
+                ServerMessageOperator.getInstance().push(userId, messageContext, false);
             }
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 }

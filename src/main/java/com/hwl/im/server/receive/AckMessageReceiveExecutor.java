@@ -1,20 +1,14 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
+import com.hwl.im.server.action.ServerMessageOperator;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
 import com.hwl.imcore.improto.ImAckMessageRequest;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
-import com.hwl.imcore.improto.ImMessageType;
 
 public class AckMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImAckMessageRequest> {
 
     public AckMessageReceiveExecutor(ImAckMessageRequest request) {
         super(request);
-    }
-
-    @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.ClientAckMessage;
     }
 
     @Override
@@ -24,6 +18,6 @@ public class AckMessageReceiveExecutor extends AbstractMessageReceiveExecutor<Im
 
     @Override
     public void executeCore(Builder response) {
-        MessageOperate.removeSentMessage(request.getFromUserId(), request.getMessageid());
+        ServerMessageOperator.getInstance().deleteSentMessage(request.getFromUserId(), request.getMessageid());
     }
 }

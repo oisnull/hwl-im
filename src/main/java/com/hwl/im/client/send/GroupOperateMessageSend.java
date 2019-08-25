@@ -1,6 +1,6 @@
 package com.hwl.im.client.send;
 
-import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
+import com.hwl.im.client.core.AbstractMessageSendExecutor;
 import com.hwl.imcore.improto.ImGroupOperateMessageContent;
 import com.hwl.imcore.improto.ImGroupOperateMessageRequest;
 import com.hwl.imcore.improto.ImGroupOperateType;
@@ -9,7 +9,6 @@ import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.imcore.improto.ImUserContent;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class GroupOperateMessageSend extends AbstractMessageSendExecutor {
 
@@ -47,11 +46,6 @@ public class GroupOperateMessageSend extends AbstractMessageSendExecutor {
     @Override
     public ImMessageType getMessageType() {
         return ImMessageType.GroupOperate;
-    }
-
-    @Override
-    public Consumer<Boolean> sendStatusCallback() {
-        return null;
     }
 
     @Override

@@ -1,17 +1,17 @@
 package com.hwl.im.client.send;
 
-import java.util.function.Consumer;
-
-import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
+import com.hwl.im.client.core.AbstractMessageSendExecutor;
 import com.hwl.imcore.improto.ImHeartBeatMessageRequest;
 import com.hwl.imcore.improto.ImMessageRequest.Builder;
 import com.hwl.imcore.improto.ImMessageType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class HeartBeatMessageSend extends AbstractMessageSendExecutor {
 
-    static Logger log = LogManager.getLogger(HeartBeatMessageSend.class.getName());
+    private long userId;
+
+    public HeartBeatMessageSend(long userId) {
+        this.userId = userId;
+    }
 
     @Override
     public ImMessageType getMessageType() {
@@ -20,12 +20,7 @@ public class HeartBeatMessageSend extends AbstractMessageSendExecutor {
 
     @Override
     public void setRequestBody(Builder request) {
-        request.setHeartBeatMessageRequest(
-                ImHeartBeatMessageRequest.newBuilder().setCurrentTime(System.currentTimeMillis()).build());
+        request.setHeartBeatMessageRequest(ImHeartBeatMessageRequest.newBuilder().setFromUserId(userId)
+                .setCurrentTime(System.currentTimeMillis()).build());
     }
-
-	@Override
-	public Consumer<Boolean> sendStatusCallback() {
-		return null;
-	}
 }

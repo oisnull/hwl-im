@@ -1,21 +1,17 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
-import com.hwl.im.core.imom.OnlineManage;
-import com.hwl.im.server.redis.TokenStorage;
-import com.hwl.imcore.improto.ImMessageType;
+import com.hwl.im.server.action.OnlineChannelManager;
+import com.hwl.im.server.action.ServerMessageOperator;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
+import com.hwl.im.server.redis.store.TokenStore;
 import com.hwl.imcore.improto.ImUserValidateRequest;
 import com.hwl.imcore.improto.ImUserValidateResponse;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;
 import java.util.function.Consumer;
 
 public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<ImUserValidateRequest> {
-//    private static Logger log = LogManager.getLogger(UserValidateReceiveExecutor.class.getName());
 
     public UserValidateReceiveExecutor(ImUserValidateRequest request) {
         super(request);
@@ -31,61 +27,49 @@ public class UserValidateReceiveExecutor extends AbstractMessageReceiveExecutor<
     }
 
     @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.UserValidate;
-    }
-
-    @Override
     public boolean isCheckSessionid() {
         return false;
     }
 
     @Override
-    public boolean isResponseNull() {
-        return false;
-    }
-
-    @Override
     public void executeCore(Builder response) {
-//        log.info("Start execute core.");
-
         if (!checkUserInfo()) {
-            response.setUserValidateResponse(
-                    ImUserValidateResponse.newBuilder().setIsSuccess(false).setMessage("User id or token is invalid").build());
+            response.setUserValidateResponse(ImUserValidateResponse.newBuilder().setIsSuccess(false)
+                    .setMessage("User id or token is invalid").build());
+            ServerMessageOperator.getInstance().push(channel, getMessageContext(response));
             return;
         }
 
-        // get user is online or not by userid
-        String sessionid = OnlineManage.getInstance().getSession(request.getUserId());
-        if (sessionid != null && !sessionid.isEmpty()) {
-            //if user is online
-            //send message to online user
-        }
+        //// get user is online or not by userid
+        // String sessionid =
+        //// OnlineChannelManager.getInstance().getSession(request.getUserId());
+        // if (sessionid != null && !sessionid.isEmpty()) {
+        // //if user is online
+        // //send message to online user
+        // }
 
         final String newSessionid = UUID.randomUUID().toString().replace("-", "");
-//        log.info("Set new session id is {}.", newSessionid);
-        OnlineManage.getInstance().setChannelSessionid(request.getUserId(), newSessionid, channel, new Consumer<Boolean>() {
-            @Override
-            public void accept(Boolean succ) {
-//                log.info("Set session id {}.", succ.toString());
-                if (succ) {
-                    response.setUserValidateResponse(
-                            ImUserValidateResponse.newBuilder().setIsSuccess(true).setIsOnline(false).setSessionid(newSessionid).build());
-
-//                    log.info("Start offline message push process for user id ({})", request.getUserId());
-                    // start offline message push process
-                    MessageOperate.serverPushOffline(request.getUserId(), request.getMessageid());
-                } else {
-                    response.setUserValidateResponse(
-                            ImUserValidateResponse.newBuilder().setIsSuccess(false).setMessage("set session failed").setIsOnline(false).setSessionid(newSessionid).build());
-                }
-            }
-        });
+        OnlineChannelManager.getInstance().setChannelSessionid(request.getUserId(), newSessionid, channel,
+                new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean succ) {
+                        if (succ) {
+                            response.setUserValidateResponse(ImUserValidateResponse.newBuilder().setIsSuccess(true)
+                                    .setIsOnline(false).setSessionid(newSessionid).build());
+                            ServerMessageOperator.getInstance().startPush(request.getUserId());
+                        } else {
+                            response.setUserValidateResponse(ImUserValidateResponse.newBuilder().setIsSuccess(false)
+                                    .setMessage("set session failed").setIsOnline(false).setSessionid(newSessionid)
+                                    .build());
+                        }
+                        // push result to client
+                        ServerMessageOperator.getInstance().push(channel, getMessageContext(response));
+                    }
+                });
     }
 
     private boolean checkUserInfo() {
-        boolean flag = request.getToken().equals(TokenStorage.getUserToken(request.getUserId()));
-//        log.info("Check user info {}.", flag);
+        boolean flag = request.getToken().equals(TokenStore.getUserToken(request.getUserId()));
         return flag;
     }
 }

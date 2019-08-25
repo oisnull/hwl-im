@@ -1,6 +1,6 @@
 package com.hwl.im.client.listen;
 
-import com.hwl.im.core.imaction.AbstractMessageListenExecutor;
+import com.hwl.im.client.core.AbstractMessageListenExecutor;
 import com.hwl.imcore.improto.ImAddFriendMessageResponse;
 import com.hwl.imcore.improto.ImMessageResponse;
 import com.hwl.imcore.improto.ImMessageType;

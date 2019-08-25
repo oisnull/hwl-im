@@ -1,9 +1,7 @@
 package com.hwl.im.client.send;
 
-import com.hwl.im.core.imaction.AbstractMessageSendExecutor;
+import com.hwl.im.client.core.AbstractMessageSendExecutor;
 import com.hwl.imcore.improto.ImAckMessageRequest;
-
-import java.util.function.Consumer;
 
 import com.hwl.imcore.improto.ImMessageRequest.Builder;
 import com.hwl.imcore.improto.ImMessageType;
@@ -33,10 +31,5 @@ public class ClientAckMessageSend extends AbstractMessageSendExecutor {
                 .setMessageid(messageid)
                 .build());
         log.debug("Client send ack message ,userid({}) messageid({})", fromUserId, messageid);
-    }
-
-    @Override
-    public Consumer<Boolean> sendStatusCallback() {
-        return null;
     }
 }

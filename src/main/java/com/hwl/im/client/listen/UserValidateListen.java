@@ -2,8 +2,9 @@ package com.hwl.im.client.listen;
 
 import java.util.function.Consumer;
 
-import com.hwl.im.core.imaction.AbstractMessageListenExecutor;
+import com.hwl.im.client.core.AbstractMessageListenExecutor;
 import com.hwl.imcore.improto.ImMessageResponse;
+import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.imcore.improto.ImUserValidateResponse;
 
 import org.apache.logging.log4j.LogManager;
@@ -41,15 +42,13 @@ public class UserValidateListen extends AbstractMessageListenExecutor<ImUserVali
     }
 
     @Override
-    public void failed(int responseCode, String message) {
-        log.debug("User validate receive failed : {}", message);
-        if (this.failedCallback != null)
-            this.failedCallback.accept(message);
+    public ImUserValidateResponse getResponse(ImMessageResponse response) {
+        return response.getUserValidateResponse();
     }
 
     @Override
-    public ImUserValidateResponse getResponse(ImMessageResponse response) {
-        return response.getUserValidateResponse();
+    public void executeCore(ImMessageType messageType, ImUserValidateResponse imUserValidateResponse) {
+
     }
 
 }

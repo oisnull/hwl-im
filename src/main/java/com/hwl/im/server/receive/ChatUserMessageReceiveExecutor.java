@@ -1,19 +1,13 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
+import com.hwl.im.server.action.ServerMessageOperator;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
 import com.hwl.imcore.improto.ImChatUserMessageRequest;
 import com.hwl.imcore.improto.ImChatUserMessageResponse;
 import com.hwl.imcore.improto.ImMessageContext;
-import com.hwl.imcore.improto.ImMessageType;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class ChatUserMessageReceiveExecutor extends AbstractMessageReceiveExecutor<ImChatUserMessageRequest> {
-
-    static Logger log = LogManager.getLogger(ChatUserMessageReceiveExecutor.class.getName());
 
     public ChatUserMessageReceiveExecutor(ImChatUserMessageRequest imChatUserMessageRequest) {
         super(imChatUserMessageRequest);
@@ -29,7 +23,7 @@ public class ChatUserMessageReceiveExecutor extends AbstractMessageReceiveExecut
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 
@@ -44,18 +38,7 @@ public class ChatUserMessageReceiveExecutor extends AbstractMessageReceiveExecut
         // check user is online or not
         // if online and sent info
         // else store the message into memory
-        Long userid = request.getChatUserMessageContent().getToUserId();
-        MessageOperate.serverPushOnline(userid, messageContext, (succ) -> {
-            if (succ) {
-                log.debug("Server push chat user({}) message success : {}", userid, messageContext.toString());
-            } else {
-                log.error("Server push chat user({}) message failed : {}", userid, messageContext.toString());
-            }
-        });
-    }
-
-    @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.ChatUser;
+        long userid = request.getChatUserMessageContent().getToUserId();
+        ServerMessageOperator.getInstance().push(userid, messageContext, false);
     }
 }

@@ -1,8 +1,8 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
-import com.hwl.im.server.redis.GroupStorage;
+import com.hwl.im.server.action.ServerMessageOperator;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
+import com.hwl.im.server.redis.store.GroupStore;
 import com.hwl.imcore.improto.*;
 import com.hwl.imcore.improto.ImMessageResponse.Builder;
 import org.apache.logging.log4j.LogManager;
@@ -17,11 +17,6 @@ public class ChatSettingMessageReceiveExecutor extends AbstractMessageReceiveExe
 
     public ChatSettingMessageReceiveExecutor(ImChatSettingMessageRequest chatSettingMessageRequest) {
         super(chatSettingMessageRequest);
-    }
-
-    @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.ChatSetting;
     }
 
     @Override
@@ -41,25 +36,19 @@ public class ChatSettingMessageReceiveExecutor extends AbstractMessageReceiveExe
                         .setBuildTime(System.currentTimeMillis()).build());
         ImMessageContext messageContext = super.getMessageContext(response);
 
-        List<Long> userIds = GroupStorage.getGroupUsers(settingMessageContent.getGroupGuid());
+        List<Long> userIds = GroupStore.getGroupUsers(settingMessageContent.getGroupGuid());
         if (userIds == null || userIds.size() <= 0) return;
 
         //remove current userid
         userIds.remove(settingMessageContent.getSettingUser().getUserId());
 
         for (Long userid : userIds) {
-             MessageOperate.serverPushOnline(userid, messageContext, (succ) -> {
-                if (succ) {
-                    log.debug("Server push chat setting message success : {}", messageContext.toString());
-                } else {
-                    log.error("Server push chat setting message failed : {}", messageContext.toString());
-                }
-            });
+            ServerMessageOperator.getInstance().push(userid, messageContext, false);
         }
     }
 
     @Override
-    protected boolean isAck() {
+    public boolean isAck() {
         return true;
     }
 }

@@ -1,7 +1,6 @@
 package com.hwl.im.server.receive;
 
-import com.hwl.im.core.imaction.AbstractMessageReceiveExecutor;
-import com.hwl.im.core.immode.MessageOperate;
+import com.hwl.im.server.core.AbstractMessageReceiveExecutor;
 import com.hwl.imcore.improto.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,15 +27,5 @@ public class TestConnectionMessageReceiveExecutor extends AbstractMessageReceive
 //                log.error("Server push test connection message failed : {}", messageContext.toString());
 //            }
 //        });
-    }
-
-    @Override
-    public ImMessageType getMessageType() {
-        return ImMessageType.TestConnection;
-    }
-
-    @Override
-    public boolean isResponseNull() {
-        return false;
     }
 }
