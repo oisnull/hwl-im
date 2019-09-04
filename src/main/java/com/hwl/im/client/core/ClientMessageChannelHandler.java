@@ -3,10 +3,15 @@ package com.hwl.im.client.core;
 import com.hwl.im.client.extra.IClientChannelListener;
 import com.hwl.imcore.improto.ImMessageContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 public class ClientMessageChannelHandler extends SimpleChannelInboundHandler<ImMessageContext> {
+
+    static Logger log = LogManager.getLogger(ClientMessageChannelHandler.class.getName());
 
     private ClientMessageOperator messageOperate;
     private IClientChannelListener channelListener;
@@ -39,7 +44,7 @@ public class ClientMessageChannelHandler extends SimpleChannelInboundHandler<ImM
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ImMessageContext msg) throws Exception {
         // if (isDebug)
-        // log.debug("Client read0 : {}", msg.toString());
+        log.debug("Client read0 : {}", msg.toString());
         this.messageOperate.listen(msg);
     }
 }
