@@ -31,16 +31,20 @@ public class SystemMessageReceiveExecutor extends AbstractMessageReceiveExecutor
     @Override
     public void executeCore(ImMessageResponse.Builder response) {
         response.setSystemMessageResponse(ImSystemMessageResponse.newBuilder()
-                .setSystemMessageContent(systemMessageContent).setBuildTime(System.currentTimeMillis()).build());
+                .setToUser(request.getToUser())
+                .setToGroupGuid(request.getToGroupGuid())
+                .setToGroupName(request.getToGroupName())
+                .setSystemMessageContent(systemMessageContent)
+                .setBuildTime(System.currentTimeMillis()).build());
         ImMessageContext messageContext = super.getMessageContext(response);
 
         if (StringUtil.isNullOrEmpty(request.getToGroupGuid())) {
-            ServerMessageOperator.getInstance().push(request.getToUserId(), messageContext, false);
+            ServerMessageOperator.getInstance().push(request.getToUser().getUserId(), messageContext, false);
         } else {
             List<Long> userIds = GroupStore.getGroupUsers(request.getToGroupGuid());
             if (userIds != null && userIds.size() > 0) {
                 for (Long user : userIds) {
-                    if (user.equals(request.getToUserId()) && !OnlineChannelManager.getInstance().isOnline(user)) {
+                    if (user.equals(request.getToUser().getUserId()) && !OnlineChannelManager.getInstance().isOnline(user)) {
                         continue;
                     }
                     ServerMessageOperator.getInstance().push(user, messageContext, false);
