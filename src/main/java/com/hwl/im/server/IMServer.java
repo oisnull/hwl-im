@@ -186,5 +186,13 @@ public class IMServer {
                     }
 
                 });
+                
+        ServerMessageExecuteFactory.registerReceiveExecutor(ImMessageType.AppVersion,
+                new Function<ImMessageRequest, ServerMessageReceiveExecutor>() {
+                    @Override
+                    public ServerMessageReceiveExecutor apply(ImMessageRequest t) {
+                        return new AppVersionMessageReceiveExecutor(t.getAppVersionRequest());
+                    }
+                });
     }
 }
