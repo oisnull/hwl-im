@@ -28,7 +28,7 @@ public class ServerMessageChannelHandler extends SimpleChannelInboundHandler<ImM
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.ALL_IDLE) {
-                log.debug("Server : client channel disconnected , {}" , ctx.channel().remoteAddress());
+                log.debug("Server : client {} channel is disconnected." , ctx.channel().remoteAddress());
                 ctx.channel().close();
             }
         }

@@ -64,8 +64,8 @@ public class ServerMessageOperator {
                     if (toUserId > 0 && ImMessageContextParser.isAck(messageContext)) {
                         // add temp message container
                         sentMessageManager.addMessage(toUserId, messageContext);
+						log.info("{} success.", logStr);
                     }
-                    log.info("{} success.", logStr);
                 } else {
                     if (toUserId > 0) {
                         if (isOfflineMessage) {

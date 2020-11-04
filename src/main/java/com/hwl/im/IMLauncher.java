@@ -3,17 +3,14 @@ package com.hwl.im;
 import com.hwl.im.client.IMClient;
 import com.hwl.im.server.IMServer;
 import com.hwl.im.server.redis.store.OfflineMessageStore;
+import com.hwl.im.server.redis.store.SessionStore;
 
 public class IMLauncher {
 
     /**
-     * windows : java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imserver
-     * 127.0.0.1 8081 java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar
-     * imserver 115.29.179.171 8017 java -jar
-     * target\hwl-im-1.0.0-jar-with-dependencies.jar imclient 127.0.0.1 8081 3
-     * 123456
-     * <p>
-     * reset design : core / client / server / entry(console)
+     * windows : java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imserver 127.0.0.1 8081 
+     * java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imserver 115.29.179.171 8017
+     * java -jar target\hwl-im-1.0.0-jar-with-dependencies.jar imclient 127.0.0.1 8081 3 123456
      */
 
     public final static String SERVER_FORMAT_PREFIX = "imserver";
@@ -26,9 +23,8 @@ public class IMLauncher {
 
     public static void main(String[] args) {
         if (args == null || args.length <= 0) {
-            args = new String[] { IMConfig.ENTRY_DEFAULT_IDENTITY, IMConfig.ENTRY_DEFAULT_HOST,
-                    IMConfig.ENTRY_DEFAULT_PORT };
             // args = new String[]{"imclient", "127.0.0.1", "8081", "3", "123456"};
+            // args = new String[]{"imserver", "127.0.0.1", "8020"};
         }
 
         String firstCmd = args[0].toLowerCase();
@@ -49,6 +45,7 @@ public class IMLauncher {
     static void runServer(String host, int port) {
         IMServer server = new IMServer(host, port);
         server.setOfflineMessageStorage(new OfflineMessageStore());
+        server.setOnlineSessionStorage(new SessionStore());
         server.start();
     }
 
